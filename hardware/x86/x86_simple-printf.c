@@ -25,7 +25,6 @@ void* scanfPthread(void* data)
 	while(1)
 	{
 		char buffer[MAX_INPUT_CHARS] = {0};
-		//scanf("%s", buffer);
 		scanf("%[^\n]", buffer);
 
 		// Tokenize
