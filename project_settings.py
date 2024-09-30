@@ -132,4 +132,4 @@ ncurses_debug = target.executable(
 	post_build_cmds 	= ["echo Finished building {0}".format(ncurses_debug_name)]
 )
 
-#targets[ncurses_debug.name] = ncurses_debug
+targets[ncurses_debug.name] = ncurses_debug

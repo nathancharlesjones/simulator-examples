@@ -3,76 +3,185 @@
 #include <stdio.h>			// For printf, scanf
 #include <string.h>			// For strtok_r
 #include <stdlib.h>			// For atof, atoi
+#include <stdint.h>			// For uint32_t
+#include <ncurses.h>		// For 
 #include "application.h"
 
+#define NUM_VIEWS 3
 #define MAX_NUM_ARGS 10
 #define MAX_INPUT_CHARS 64
 
-char background[] =	"+------------------------+\n"
-					"|Motor speed:    %lf|\n"
-					"|LED brightness: %lf|\n"
-					"+------------------------+\n";
+char view0[] =		"+------------------------+------------------------+\n\r"
+					"|Max accel:              |Motor speed:            |\n\r"
+					"|X:                      |LED brightness:         |\n\r"
+					"|Y:                      +------------------------+\n\r"
+					"|Z:                      |                         \n\r"
+					"+------------------------+                         \n\r"
+					"+-------------------------------------------------+\n\r"
+					"|>>                                               |\n\r"
+					"+-------------------------------------------------+\n\r";
 
-int scanf_argc = 0;
-char *scanf_argv[MAX_NUM_ARGS] = {0};
+char view1[] =		"+------------------------++------------------------+\n\r"
+					"|Max accel:              ||Motor speed:            |\n\r"
+					"|X:                      ||                        |\n\r"
+					"|                        ||LED brightness:         |\n\r"
+					"|Y:                      ||                        |\n\r"
+					"|                        |+------------------------+\n\r"
+					"|Z:                      |                          \n\r"
+					"|                        |                          \n\r"
+					"+------------------------+                          \n\r"
+					"+-------------------------------------------------+ \n\r"
+					"|>>                                               | \n\r"
+					"+-------------------------------------------------+ \n\r";
 
+char view2[] = 		"+------------------------+-Graph-of-X-Y-Z---------------+\n\r"
+					"|Max accel:              |                              |\n\r"
+					"|X:                      |                              |\n\r"
+					"|                        |                              |\n\r"
+					"|Y:                      |                              |\n\r"
+					"|                        |                              |\n\r"
+					"|Z:                      |                              |\n\r"
+					"|                        |                              |\n\r"
+					"+------------------------|                              |\n\r"
+					"|Motor speed:            |                              |\n\r"
+					"|                        |                              |\n\r"
+					"|LED brightness:         |                              |\n\r"
+					"|                        |                              |\n\r"
+					"+------------------------+------------------------------+\n\r"
+					"|>>                                                     |\n\r"
+					"+-------------------------------------------------------+\n\r";
+
+/*
+char view1[] =		"┌────────────────────────┐┌────────────────────────┐\n\r"
+					"│Max accel:              ││Motor speed:            │\n\r"
+					"│X:                      ││                        │\n\r"
+					"│                        ││LED brightness:         │\n\r"
+					"│Y:                      ││                        │\n\r"
+					"│                        │└────────────────────────┘\n\r"
+					"│Z:                      │                          \n\r"
+					"│                        │                          \n\r"
+					"└────────────────────────┘                          \n\r"
+					"┌──────────────────────────────────────────────────┐\n\r"
+					"│>>                                                │\n\r"
+					"└──────────────────────────────────────────────────┘\n\r";
+*/
+
+typedef struct view_t
+{
+	char * view;
+	uint8_t locations[7][2];
+} view_t;
+									// Max       X        Y        Z       Speed   Brightness Prompt
+view_t views[NUM_VIEWS] = {	{ view0, { {1, 17}, {2, 17}, {3, 17}, {4, 17}, {1, 41}, {2, 41},  {7, 4}  } },
+							{ view1, { {1, 17}, {2, 17}, {4, 17}, {6, 17}, {1, 42}, {3, 42},  {10, 4} } },
+							{ view2, { {1, 17}, {2, 17}, {4, 17}, {6, 17}, {9, 17}, {11, 17}, {14, 4} } } };
+
+WINDOW * mainwin;
 pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
-double curr_x = 0.0, curr_y = 0.0, curr_z = 0.0, curr_motor_speed = 0.0, curr_led_brightness = 0.0;
+double curr_x = 1.0, curr_y = 2.0, curr_z = 3.0;
+uint8_t curr_view = 0;
 
-void updateDisplay(void)
+void showDouble(double val, int y, int x)
 {
-	printf("\033c");		// Reset terminal
-	printf(background, curr_motor_speed, curr_led_brightness);
+	int old_y, old_x;
+	getyx(mainwin, old_y, old_x);
+	mvprintw(y, x, "%lf", val);
+	move(old_y, old_x);
+	refresh();
+}
+
+void showView(uint8_t view_num)
+{
+	clear();
+	printw("%s", views[view_num].view);
+	showDouble(curr_x, views[view_num].locations[1][0], views[view_num].locations[1][1]);
+	showDouble(curr_y, views[view_num].locations[2][0], views[view_num].locations[2][1]);
+	showDouble(curr_z, views[view_num].locations[3][0], views[view_num].locations[3][1]);
+	move(views[view_num].locations[6][0], views[view_num].locations[6][1]);
+	refresh();
 }
 
 void initHardware(int argc, char ** argv)
 {
+	mainwin = initscr();
+	showView(curr_view);
 	pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
-	updateDisplay();
+}
+
+void tokenize(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_argv)
+{
+	char *rest;
+    char *token = strtok_r(buffer, " \n", &rest);
+    while (token != NULL && *argc <= sizeof_argv) {
+      argv[(*argc)++] = token;
+      token = strtok_r(NULL, " \n", &rest);
+    }
+}
+
+void drawBarGraph(uint8_t x, uint8_t y, uint8_t width, double min, double max, double val)
+{
+	double increment = (max - min) / width;
+	double bar_val = min;
+	while(val > bar_val)
+	{
+		mvprintw(x++, y, "█");
+		bar_val += increment;
+	}
+	if((bar_val - val) > 0.4*increment) mvprintw(x++, y, "▌");
 }
 
 void* scanfPthread(void* data)
 {
+	uint8_t argc = 0;
+	char *argv[MAX_NUM_ARGS] = {0};
+
 	while(1)
 	{
-		char buffer[MAX_INPUT_CHARS] = {0};
-		scanf("%[^\n]", buffer);		// Read until newline is reached
+		uint8_t idx = 0;
+		char buffer[MAX_INPUT_CHARS+1] = {0};
 
-		// Tokenize
-		char *rest;
-	    char *token = strtok_r(buffer, " \n", &rest);
-	    while (token != NULL) {
-	      scanf_argv[scanf_argc++] = token;
-	      token = strtok_r(NULL, " \n", &rest);
-	    }
+		while((buffer[idx++] = getch()) != '\n' && idx < MAX_INPUT_CHARS);
 
-	    switch(scanf_argv[0][0])
-	    {
+		switch(buffer[0])
+		{
 	    	case 'x':
-	    		curr_x = atof(scanf_argv[1]);
+	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
+	    		curr_x = atof(argv[1]);
+	    		showDouble(curr_x, 2, 17);
 	    		break;
 	    	case 'y':
-	    		curr_y = atof(scanf_argv[1]);
+	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
+	    		curr_y = atof(argv[1]);
+	    		showDouble(curr_y, 3, 17);
 	    		break;
 	    	case 'z':
-	    		curr_z = atof(scanf_argv[1]);
+	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
+	    		curr_z = atof(argv[1]);
+	    		showDouble(curr_z, 4, 17);
 	    		break;
 	    	case 't':
+	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		accelDoubleTapCallback();
 	    		break;
-	    	case 'p':
-	    		period = atoi(scanf_argv[1]);
+	    	case 'v':
+	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
+	    		curr_view = atoi(argv[1]);
+	    		showView(curr_view);
 	    		break;
-	    	case 'm':
-	    		max_accel = atof(scanf_argv[1]);
-	    		break;
-	    }
+			default:								// Message meant for application code
+				idx = 0;
+				while(buffer[idx]) charReceivedCallback(buffer[idx++]);
+				break;
+		}
 
 	    // Reset string and clear stdin buffer
-	    scanf_argc = 0;
-	    int c;
-	    while ((c = getchar()) != '\n' && c != EOF);
+	    //char c;
+	    //while ((c = getch()) != '\n' && c != EOF);
+	    mvprintw(views[curr_view].locations[6][0], views[curr_view].locations[6][1], "                                              ");
+	    argc = 0;
+	    move(views[curr_view].locations[6][0], views[curr_view].locations[6][1]);
+	    refresh();
 	}
 }
 
@@ -90,26 +199,15 @@ void readAccel_gs(double* x, double* y, double* z)
 
 void setMotorSpeed(double speed)
 {
-	static uint32_t next = -1;
-	static uint32_t period = 100;
-
-	if(next - getMillis() > period)
-	{
-		curr_motor_speed = speed;
-		updateDisplay();
-		next += period;
-	}
+	showDouble(speed, views[curr_view].locations[4][0], views[curr_view].locations[4][1]);
 }
 
 void setLED(double brightness)
 {
-	static uint32_t next = -1;
-	static uint32_t period = 100;
+	showDouble(brightness, views[curr_view].locations[5][0], views[curr_view].locations[5][1]);
+}
 
-	if(next - getMillis() > period)
-	{
-		curr_led_brightness = brightness;
-		updateDisplay();
-		next += period;
-	}
+void display(const char * msg)
+{
+	//printf("%s", msg);
 }
