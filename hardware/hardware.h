@@ -26,4 +26,8 @@ void setMotorSpeed(double /* speed */);
 //
 void setLED(double /* brightness */);
 
+// Display a NUL-terminated string to the user
+//
+void display(const char * /* msg */);
+
 #endif /* HARDWARE_H */
