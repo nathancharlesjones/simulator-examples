@@ -100,7 +100,7 @@ printf_box_debug = target.executable(
 	post_build_cmds 	= ["echo Finished building {0}".format(printf_box_debug_name)]
 )
 
-#targets[printf_box_debug.name] = printf_box_debug
+targets[printf_box_debug.name] = printf_box_debug
 
 #######################################
 #                                     #

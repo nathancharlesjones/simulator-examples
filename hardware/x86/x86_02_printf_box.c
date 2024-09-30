@@ -3,6 +3,7 @@
 #include <stdio.h>			// For printf, scanf
 #include <string.h>			// For strtok_r
 #include <stdlib.h>			// For atof, atoi
+#include <stdint.h>			// For uint32_t
 #include "application.h"
 
 #define MAX_NUM_ARGS 10
@@ -12,9 +13,6 @@ char background[] =	"+------------------------+\n"
 					"|Motor speed:    %lf|\n"
 					"|LED brightness: %lf|\n"
 					"+------------------------+\n";
-
-int scanf_argc = 0;
-char *scanf_argv[MAX_NUM_ARGS] = {0};
 
 pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
@@ -34,44 +32,55 @@ void initHardware(int argc, char ** argv)
 
 void* scanfPthread(void* data)
 {
+	int scanf_argc = 0;
+	char *scanf_argv[MAX_NUM_ARGS] = {0};
+
 	while(1)
 	{
-		char buffer[MAX_INPUT_CHARS] = {0};
-		scanf("%[^\n]", buffer);		// Read until newline is reached
+		char buffer[MAX_INPUT_CHARS+1] = {0};
+		char c = getchar();
+		if(c != 'x' && c != 'y' && c != 'z' && c != 't')			// Message meant for application code
+		{
+			while(c != '\n' && strlen(buffer) < MAX_INPUT_CHARS)
+			{
+				charReceivedCallback(c);
+				c = getchar();
+			}
+			charReceivedCallback(c);
+		}
+		else								// Message meant to simulate input
+		{
+			ungetc(c, stdin);
+			scanf("%[^\n]", buffer);		// Read until newline is reached
 
-		// Tokenize
-		char *rest;
-	    char *token = strtok_r(buffer, " \n", &rest);
-	    while (token != NULL) {
-	      scanf_argv[scanf_argc++] = token;
-	      token = strtok_r(NULL, " \n", &rest);
-	    }
+			// Tokenize
+			char *rest;
+		    char *token = strtok_r(buffer, " \n", &rest);
+		    while (token != NULL) {
+		      scanf_argv[scanf_argc++] = token;
+		      token = strtok_r(NULL, " \n", &rest);
+		    }
 
-	    switch(scanf_argv[0][0])
-	    {
-	    	case 'x':
-	    		curr_x = atof(scanf_argv[1]);
-	    		break;
-	    	case 'y':
-	    		curr_y = atof(scanf_argv[1]);
-	    		break;
-	    	case 'z':
-	    		curr_z = atof(scanf_argv[1]);
-	    		break;
-	    	case 't':
-	    		accelDoubleTapCallback();
-	    		break;
-	    	case 'p':
-	    		period = atoi(scanf_argv[1]);
-	    		break;
-	    	case 'm':
-	    		max_accel = atof(scanf_argv[1]);
-	    		break;
-	    }
+		    switch(scanf_argv[0][0])
+		    {
+		    	case 'x':
+		    		curr_x = atof(scanf_argv[1]);
+		    		break;
+		    	case 'y':
+		    		curr_y = atof(scanf_argv[1]);
+		    		break;
+		    	case 'z':
+		    		curr_z = atof(scanf_argv[1]);
+		    		break;
+		    	case 't':
+		    		accelDoubleTapCallback();
+		    		break;
+		    }
+
+	    	scanf_argc = 0;
+		}
 
 	    // Reset string and clear stdin buffer
-	    scanf_argc = 0;
-	    int c;
 	    while ((c = getchar()) != '\n' && c != EOF);
 	}
 }
@@ -112,4 +121,9 @@ void setLED(double brightness)
 		updateDisplay();
 		next += period;
 	}
+}
+
+void display(const char * msg)
+{
+	printf("%s", msg);
 }

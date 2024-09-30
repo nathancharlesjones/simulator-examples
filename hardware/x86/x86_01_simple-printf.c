@@ -9,9 +9,6 @@
 #define MAX_NUM_ARGS 10
 #define MAX_INPUT_CHARS 64
 
-int scanf_argc = 0;
-char *scanf_argv[MAX_NUM_ARGS] = {0};
-
 pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
 double curr_x = 0.0, curr_y = 0.0, curr_z = 0.0;
@@ -23,6 +20,9 @@ void initHardware(int argc, char ** argv)
 
 void* scanfPthread(void* data)
 {
+	int scanf_argc = 0;
+	char *scanf_argv[MAX_NUM_ARGS] = {0};
+	
 	while(1)
 	{
 		char buffer[MAX_INPUT_CHARS+1] = {0};
