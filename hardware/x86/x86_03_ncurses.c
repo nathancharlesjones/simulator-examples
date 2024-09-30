@@ -5,6 +5,7 @@
 #include <stdlib.h>			// For atof, atoi
 #include <stdint.h>			// For uint32_t
 #include <ncurses.h>		// For 
+#include <stdbool.h>		// For bool, true, false
 #include "application.h"
 
 #define NUM_VIEWS 3
@@ -81,6 +82,8 @@ pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
 double curr_x = 1.0, curr_y = 2.0, curr_z = 3.0;
 uint8_t curr_view = 0;
+bool rand_accels = false;
+float volatility = 0.1;
 
 void showDouble(double val, int y, int x)
 {
@@ -123,7 +126,7 @@ void drawBarGraph(uint8_t x, uint8_t y, uint8_t width, double min, double max, d
 {
 	double increment = (max - min) / width;
 	double bar_val = min;
-	while(val > bar_val)
+	while((val - increment) > bar_val)
 	{
 		mvprintw(x++, y, "█");
 		bar_val += increment;
@@ -148,17 +151,17 @@ void* scanfPthread(void* data)
 	    	case 'x':
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		curr_x = atof(argv[1]);
-	    		showDouble(curr_x, 2, 17);
+	    		showDouble(curr_x, views[curr_view].locations[1][0], views[curr_view].locations[1][1]);
 	    		break;
 	    	case 'y':
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		curr_y = atof(argv[1]);
-	    		showDouble(curr_y, 3, 17);
+	    		showDouble(curr_x, views[curr_view].locations[2][0], views[curr_view].locations[2][1]);
 	    		break;
 	    	case 'z':
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		curr_z = atof(argv[1]);
-	    		showDouble(curr_z, 4, 17);
+	    		showDouble(curr_x, views[curr_view].locations[3][0], views[curr_view].locations[3][1]);
 	    		break;
 	    	case 't':
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
@@ -168,6 +171,9 @@ void* scanfPthread(void* data)
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		curr_view = atoi(argv[1]);
 	    		showView(curr_view);
+	    		break;
+	    	case 'r':
+	    		rand_accels = !rand_accels;
 	    		break;
 			default:								// Message meant for application code
 				idx = 0;
@@ -190,8 +196,22 @@ uint32_t getMillis(void)
 	return (uint32_t)((double)clock() * 1000.0 / CLOCKS_PER_SEC);
 }
 
+double getRandFromNegOneToOne(void)
+{
+	return (((double)rand()/RAND_MAX)*2)-1;
+}
+
 void readAccel_gs(double* x, double* y, double* z)
 {
+	if(rand_accels)
+	{
+		curr_x = curr_x + getRandFromNegOneToOne()*curr_x*volatility;
+		showDouble(curr_x, views[curr_view].locations[1][0], views[curr_view].locations[1][1]);
+		curr_y = curr_y + getRandFromNegOneToOne()*curr_y*volatility;
+		showDouble(curr_y, views[curr_view].locations[2][0], views[curr_view].locations[2][1]);
+		curr_z = curr_z + getRandFromNegOneToOne()*curr_z*volatility;
+		showDouble(curr_z, views[curr_view].locations[3][0], views[curr_view].locations[3][1]);
+	}
 	*x = curr_x;
 	*y = curr_y;
 	*z = curr_z;
