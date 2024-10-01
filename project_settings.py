@@ -9,14 +9,6 @@ targets = {}
 
 #######################################
 #                                     #
-#       TinyGPS Library               #
-#                                     #
-#######################################
-
-
-
-#######################################
-#                                     #
 #       Common to All                 #
 #                                     #
 #######################################
@@ -32,75 +24,158 @@ common_flags 			= ["-Wall",
 debug_flags 			= ["-g3",
 						   "-O0"]
 release_flags			= ["-O3"]
-include_dirs 			= ["application", "hardware"]
-source_files_common		= ["application/application.c"]
+include_dirs 			= ["hardware"]
 linker_flags_common		= ["-Wl,--gc-sections"]
 libraries_common 		= ["m"]
 map_file_str			= "-Wl,-Map,{0}/{1}.map,--cref"
 
+source_files_common = []
+
 #######################################
 #                                     #
-#      Simple Printf Simulator        #
+#       Basic application             #
 #                                     #
 #######################################
 
-simple_printf_name				= "simple_printf"
-simple_printf_build_dir			= "build/"+simple_printf_name
-simple_printf_source_files		=  source_files_common + \
-									["hardware/x86/x86_01_simple-printf.c"]
+include_dirs_basic		= include_dirs + ["application/basic"]
+source_files_basic		= ["application/basic/application.c"]
 
-simple_printf_debug_name 		= simple_printf_name + "_debug"
-simple_printf_debug_build_dir 	= simple_printf_build_dir + "/debug"
+#######################################
+#                                     #
+#       Advanced application          #
+#                                     #
+#######################################
 
-simple_printf_debug = target.executable(
-	name 				= 	simple_printf_debug_name,
-	build_dir 			= 	simple_printf_debug_build_dir,
-	target 				= 	target_str.format(simple_printf_debug_name),
+include_dirs_advanced		= include_dirs + ["application/advanced"]
+source_files_advanced		= ["application/advanced/application.c"]
+
+#######################################
+#                                     #
+#   Simple Printf Simulator (Basic)   #
+#                                     #
+#######################################
+
+simple_printf_basic_name				= "simple_printf_basic"
+simple_printf_basic_build_dir			= "build/"+simple_printf_basic_name
+simple_printf_basic_source_files		=  source_files_basic + \
+											["hardware/x86/x86_01_simple-printf_basic.c"]
+
+simple_printf_basic_debug_name 			= simple_printf_basic_name + "_debug"
+simple_printf_basic_debug_build_dir 	= simple_printf_basic_build_dir + "/debug"
+
+simple_printf_basic_debug = target.executable(
+	name 				= 	simple_printf_basic_debug_name,
+	build_dir 			= 	simple_printf_basic_debug_build_dir,
+	target 				= 	target_str.format(simple_printf_basic_debug_name),
 	c_compiler			= 	c_compiler,
 	c_flags 			= 	common_flags + debug_flags,
 	linker 				= 	linker,
 	linker_flags 		=	linker_flags_common + \
-							[map_file_str.format(simple_printf_debug_build_dir, simple_printf_debug_name)],
-	source_files 		= 	simple_printf_source_files,
-	include_dirs 		= 	include_dirs,
+							[map_file_str.format(simple_printf_basic_debug_build_dir, simple_printf_basic_debug_name)],
+	source_files 		= 	simple_printf_basic_source_files,
+	include_dirs 		= 	include_dirs_basic,
 	libraries 			= 	libraries_common,
 	debugger 			=	debugger,
-	post_build_cmds 	= ["echo Finished building {0}".format(simple_printf_debug_name)]
+	post_build_cmds 	= ["echo Finished building {0}".format(simple_printf_basic_debug_name)]
 )
 
-targets[simple_printf_debug.name] = simple_printf_debug
+targets[simple_printf_basic_debug.name] = simple_printf_basic_debug
 
 #######################################
 #                                     #
-#        Printf Box Simulator         #
+# Simple Printf Simulator (Advanced)  #
 #                                     #
 #######################################
 
-printf_box_name				= "printf_box"
-printf_box_build_dir			= "build/"+printf_box_name
-printf_box_source_files		=  source_files_common + \
-									["hardware/x86/x86_02_printf_box.c"]
+simple_printf_advanced_name				= "simple_printf_advanced"
+simple_printf_advanced_build_dir			= "build/"+simple_printf_advanced_name
+simple_printf_advanced_source_files		=  source_files_advanced + \
+											["hardware/x86/x86_01_simple-printf_advanced.c"]
 
-printf_box_debug_name 		= printf_box_name + "_debug"
-printf_box_debug_build_dir 	= printf_box_build_dir + "/debug"
+simple_printf_advanced_debug_name 			= simple_printf_advanced_name + "_debug"
+simple_printf_advanced_debug_build_dir 	= simple_printf_advanced_build_dir + "/debug"
 
-printf_box_debug = target.executable(
-	name 				= 	printf_box_debug_name,
-	build_dir 			= 	printf_box_debug_build_dir,
-	target 				= 	target_str.format(printf_box_debug_name),
+simple_printf_advanced_debug = target.executable(
+	name 				= 	simple_printf_advanced_debug_name,
+	build_dir 			= 	simple_printf_advanced_debug_build_dir,
+	target 				= 	target_str.format(simple_printf_advanced_debug_name),
 	c_compiler			= 	c_compiler,
 	c_flags 			= 	common_flags + debug_flags,
 	linker 				= 	linker,
 	linker_flags 		=	linker_flags_common + \
-							[map_file_str.format(printf_box_debug_build_dir, printf_box_debug_name)],
-	source_files 		= 	printf_box_source_files,
-	include_dirs 		= 	include_dirs,
+							[map_file_str.format(simple_printf_advanced_debug_build_dir, simple_printf_advanced_debug_name)],
+	source_files 		= 	simple_printf_advanced_source_files,
+	include_dirs 		= 	include_dirs_advanced,
 	libraries 			= 	libraries_common,
 	debugger 			=	debugger,
-	post_build_cmds 	= ["echo Finished building {0}".format(printf_box_debug_name)]
+	post_build_cmds 	= ["echo Finished building {0}".format(simple_printf_advanced_debug_name)]
 )
 
-targets[printf_box_debug.name] = printf_box_debug
+targets[simple_printf_advanced_debug.name] = simple_printf_advanced_debug
+
+#######################################
+#                                     #
+#     Printf Box Simulator (Basic)    #
+#                                     #
+#######################################
+
+printf_box_basic_name				= "printf-box_basic"
+printf_box_basic_build_dir			= "build/"+printf_box_basic_name
+printf_box_basic_source_files		=  source_files_basic + \
+									["hardware/x86/x86_02_printf-box_basic.c"]
+
+printf_box_basic_debug_name 		= printf_box_basic_name + "_debug"
+printf_box_basic_debug_build_dir 	= printf_box_basic_build_dir + "/debug"
+
+printf_box_basic_debug = target.executable(
+	name 				= 	printf_box_basic_debug_name,
+	build_dir 			= 	printf_box_basic_debug_build_dir,
+	target 				= 	target_str.format(printf_box_basic_debug_name),
+	c_compiler			= 	c_compiler,
+	c_flags 			= 	common_flags + debug_flags,
+	linker 				= 	linker,
+	linker_flags 		=	linker_flags_common + \
+							[map_file_str.format(printf_box_basic_debug_build_dir, printf_box_basic_debug_name)],
+	source_files 		= 	printf_box_basic_source_files,
+	include_dirs 		= 	include_dirs_basic,
+	libraries 			= 	libraries_common,
+	debugger 			=	debugger,
+	post_build_cmds 	= ["echo Finished building {0}".format(printf_box_basic_debug_name)]
+)
+
+targets[printf_box_basic_debug.name] = printf_box_basic_debug
+
+#######################################
+#                                     #
+#   Printf Box Simulator (Advanced)   #
+#                                     #
+#######################################
+
+printf_box_advanced_name				= "printf-box_advanced"
+printf_box_advanced_build_dir			= "build/"+printf_box_advanced_name
+printf_box_advanced_source_files		=  source_files_advanced + \
+									["hardware/x86/x86_02_printf-box_advanced.c"]
+
+printf_box_advanced_debug_name 		= printf_box_advanced_name + "_debug"
+printf_box_advanced_debug_build_dir 	= printf_box_advanced_build_dir + "/debug"
+
+printf_box_advanced_debug = target.executable(
+	name 				= 	printf_box_advanced_debug_name,
+	build_dir 			= 	printf_box_advanced_debug_build_dir,
+	target 				= 	target_str.format(printf_box_advanced_debug_name),
+	c_compiler			= 	c_compiler,
+	c_flags 			= 	common_flags + debug_flags,
+	linker 				= 	linker,
+	linker_flags 		=	linker_flags_common + \
+							[map_file_str.format(printf_box_advanced_debug_build_dir, printf_box_advanced_debug_name)],
+	source_files 		= 	printf_box_advanced_source_files,
+	include_dirs 		= 	include_dirs_advanced,
+	libraries 			= 	libraries_common,
+	debugger 			=	debugger,
+	post_build_cmds 	= ["echo Finished building {0}".format(printf_box_advanced_debug_name)]
+)
+
+targets[printf_box_advanced_debug.name] = printf_box_advanced_debug
 
 #######################################
 #                                     #
@@ -132,4 +207,4 @@ ncurses_debug = target.executable(
 	post_build_cmds 	= ["echo Finished building {0}".format(ncurses_debug_name)]
 )
 
-targets[ncurses_debug.name] = ncurses_debug
+#targets[ncurses_debug.name] = ncurses_debug

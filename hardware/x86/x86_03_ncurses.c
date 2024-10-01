@@ -22,6 +22,16 @@ char view0[] =		"+------------------------+------------------------+\n\r"
 					"|>>                                               |\n\r"
 					"+-------------------------------------------------+\n\r";
 
+char view0[] =		"+------------------------+------------------------+\n\r"
+					"|Max accel:              |Motor speed:            |\n\r"
+					"|X:                      |LED brightness:         |\n\r"
+					"|  - Max:                +------------------------+\n\r"
+					"|Z:                      |                         \n\r"
+					"+------------------------+                         \n\r"
+					"+-------------------------------------------------+\n\r"
+					"|>>                                               |\n\r"
+					"+-------------------------------------------------+\n\r";
+
 char view1[] =		"+------------------------++------------------------+\n\r"
 					"|Max accel:              ||Motor speed:            |\n\r"
 					"|X:                      ||                        |\n\r"
@@ -122,16 +132,31 @@ void tokenize(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_argv)
     }
 }
 
-void drawBarGraph(uint8_t x, uint8_t y, uint8_t width, double min, double max, double val)
+void drawBarGraph(uint8_t y, uint8_t x, uint8_t width, double min, double max, double val)
 {
+	char * full_bar = "█";
+	char * half_bar = "▌";
+	char * bars[] = { "█", "▌"};
 	double increment = (max - min) / width;
 	double bar_val = min;
 	while((val - increment) > bar_val)
 	{
-		mvprintw(x++, y, "█");
+		move(y, x);
+		printf("█");
+		refresh();
+		x++;
+		//mvprintw(x++, y, "%s", (char*)bars[0]);
 		bar_val += increment;
 	}
-	if((bar_val - val) > 0.4*increment) mvprintw(x++, y, "▌");
+	if((bar_val - val) > 0.4*increment)
+	{
+		move(y, x);
+		printf("▌");
+		refresh();
+		//mvprintw(x++, y, "%s", (char*)bars[1]);
+	}
+	fflush(stdout);
+	refresh();
 }
 
 void* scanfPthread(void* data)
@@ -152,6 +177,7 @@ void* scanfPthread(void* data)
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
 	    		curr_x = atof(argv[1]);
 	    		showDouble(curr_x, views[curr_view].locations[1][0], views[curr_view].locations[1][1]);
+	    		if(curr_view > 0) drawBarGraph(views[curr_view].locations[1][0]+1, 1, 25, 0, 10, curr_x);
 	    		break;
 	    	case 'y':
 	    		tokenize(buffer, &argc, argv, MAX_NUM_ARGS);
