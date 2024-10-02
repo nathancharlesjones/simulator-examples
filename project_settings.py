@@ -58,7 +58,7 @@ source_files_advanced		= ["application/advanced/application.c"]
 simple_printf_basic_name				= "simple_printf_basic"
 simple_printf_basic_build_dir			= "build/"+simple_printf_basic_name
 simple_printf_basic_source_files		=  source_files_basic + \
-											["hardware/x86/x86_01_simple-printf_basic.c"]
+											["hardware/x86/x86_00_simple-printf_basic.c"]
 
 simple_printf_basic_debug_name 			= simple_printf_basic_name + "_debug"
 simple_printf_basic_debug_build_dir 	= simple_printf_basic_build_dir + "/debug"
@@ -90,7 +90,7 @@ targets[simple_printf_basic_debug.name] = simple_printf_basic_debug
 simple_printf_advanced_name				= "simple_printf_advanced"
 simple_printf_advanced_build_dir			= "build/"+simple_printf_advanced_name
 simple_printf_advanced_source_files		=  source_files_advanced + \
-											["hardware/x86/x86_01_simple-printf_advanced.c"]
+											["hardware/x86/x86_00_simple-printf_advanced.c"]
 
 simple_printf_advanced_debug_name 			= simple_printf_advanced_name + "_debug"
 simple_printf_advanced_debug_build_dir 	= simple_printf_advanced_build_dir + "/debug"
@@ -122,7 +122,7 @@ targets[simple_printf_advanced_debug.name] = simple_printf_advanced_debug
 printf_box_basic_name				= "printf-box_basic"
 printf_box_basic_build_dir			= "build/"+printf_box_basic_name
 printf_box_basic_source_files		=  source_files_basic + \
-									["hardware/x86/x86_02_printf-box_basic.c"]
+									["hardware/x86/x86_01_pretty-printf_basic.c"]
 
 printf_box_basic_debug_name 		= printf_box_basic_name + "_debug"
 printf_box_basic_debug_build_dir 	= printf_box_basic_build_dir + "/debug"
@@ -154,7 +154,7 @@ targets[printf_box_basic_debug.name] = printf_box_basic_debug
 printf_box_advanced_name				= "printf-box_advanced"
 printf_box_advanced_build_dir			= "build/"+printf_box_advanced_name
 printf_box_advanced_source_files		=  source_files_advanced + \
-									["hardware/x86/x86_02_printf-box_advanced.c"]
+									["hardware/x86/x86_01_pretty-printf_advanced_v1.c"]
 
 printf_box_advanced_debug_name 		= printf_box_advanced_name + "_debug"
 printf_box_advanced_debug_build_dir 	= printf_box_advanced_build_dir + "/debug"
@@ -186,7 +186,7 @@ targets[printf_box_advanced_debug.name] = printf_box_advanced_debug
 printf_box_advanced_v2_name				= "printf-box_advanced_v2"
 printf_box_advanced_v2_build_dir			= "build/"+printf_box_advanced_v2_name
 printf_box_advanced_v2_source_files		=  source_files_advanced + \
-									["hardware/x86/x86_02_printf-box_advanced_v2.c"]
+									["hardware/x86/x86_01_pretty-printf_advanced_v2.c"]
 
 printf_box_advanced_v2_debug_name 		= printf_box_advanced_v2_name + "_debug"
 printf_box_advanced_v2_debug_build_dir 	= printf_box_advanced_v2_build_dir + "/debug"
