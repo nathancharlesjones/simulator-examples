@@ -10,15 +10,32 @@
 #define MAX_NUM_ARGS 10
 #define MAX_INPUT_CHARS 64
 
-char background[] =	"+------------------------+\n\r"
-					"|Max accel:   %11lf|\n\r"
-					"|X:           %11lf|\n\r"
-					"|Y:           %11lf|\n\r"
-					"|Z:           %11lf|\n\r"
-					"+------------------------+\n\r"
-					"|Motor speed:   %9lf|\n\r"
-					"|LED brightness:%9lf|\n\r"
-					"+------------------------+\n\r";
+char background[] =	"+-----------------------------------------------------+\n\r"
+					"|X:              %12lf"     "                         |\n\r"
+					"|Y:              %12lf"     "                         |\n\r"
+					"|Z:              %12lf"     "                         |\n\r"
+					"|Values generated: %10s"    " | Volatility: %8lf"  "  |\n\r"
+					"+-----------------------------------------------------+\n\r"
+					"|Max accel:      %12lf"     "                         |\n\r"
+					"|Motor speed:    %12lf"     "                         |\n\r"
+					"|LED brightness: %12lf"     "                         |\n\r"
+					"+-----------------------------------------------------+\n\r"
+					"|Application commands:                                |\n\r"
+					"| 't': Toggle which direction is used to control the  |\n\r"
+					"|      motor speed (x -> y -> z -> total -> x)        |\n\r"
+					"| 'm <double>': Set max accel value to <double> (used |\n\r"
+					"|      to scale motor speed and LED brightness)       |\n\r"
+					"| 'p <int>': Set main task period to <int> ms (min: 1)|\n\r"
+					"| 'w <double>': Set coefficient for the moving average|\n\r"
+					"|      of x/y/z (0: Heavy averaging; 1: No averaging) |\n\r"
+					"|Simulator commands:                                  |\n\r"
+					"| 'x <double>': Set x accelerometer value to <double> |\n\r"
+					"| 'y <double>': Set y accelerometer value to <double> |\n\r"
+					"| 'z <double>': Set z accelerometer value to <double> |\n\r"
+					"| 'r': Toggle setting x/y/z randomly or manually      |\n\r"
+					"| 'v <double>': Set the 'volatility' of the randomly  |\n\r"
+					"|      generated numbers (x = x + rand(-1,1)*vol)     |\n\r"
+					"+-----------------------------------------------------+\n\r";
 
 pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
@@ -28,14 +45,15 @@ double volatility = 0.2;
 
 void updateDisplay(void)
 {
-	printf("\033c");		// Reset terminal
-	printf(background, getMaxAccel(), curr_x, curr_y, curr_z, curr_motor_speed, curr_led_brightness);
+	printf("\033[;H");		// Send cursor to top-left corner
+	printf(background, curr_x, curr_y, curr_z, rand_accels ? "Randomly" : "Manually", volatility, getMaxAccel(), curr_motor_speed, curr_led_brightness);
 }
 
 void initHardware(int argc, char ** argv)
 {
-	pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
+	printf("\033[2J\033[;H");		// Clear terminal
 	updateDisplay();
+	pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
 }
 
 void* scanfPthread(void* data)
@@ -105,9 +123,9 @@ void readAccel_gs(double* x, double* y, double* z)
 {
 	if(rand_accels)
 	{
-		curr_x = curr_x + ((double)rand()/RAND_MAX)*volatility - (volatility/2);
-		curr_y = curr_y + ((double)rand()/RAND_MAX)*volatility - (volatility/2);
-		curr_z = curr_z + ((double)rand()/RAND_MAX)*volatility - (volatility/2);
+		curr_x = curr_x + volatility*(((double)rand()/RAND_MAX)*2 - 1);
+		curr_y = curr_y + volatility*(((double)rand()/RAND_MAX)*2 - 1);
+		curr_z = curr_z + volatility*(((double)rand()/RAND_MAX)*2 - 1);
 	}
 	*x = curr_x;
 	*y = curr_y;

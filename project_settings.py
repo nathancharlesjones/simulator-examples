@@ -179,32 +179,32 @@ targets[printf_box_advanced_debug.name] = printf_box_advanced_debug
 
 #######################################
 #                                     #
-#         ncurses Simulator           #
+# Printf Box Simulator (Advanced, v2) #
 #                                     #
 #######################################
 
-ncurses_name				= "ncurses"
-ncurses_build_dir			= "build/"+ncurses_name
-ncurses_source_files		=  source_files_common + \
-									["hardware/x86/x86_03_ncurses.c"]
+printf_box_advanced_v2_name				= "printf-box_advanced_v2"
+printf_box_advanced_v2_build_dir			= "build/"+printf_box_advanced_v2_name
+printf_box_advanced_v2_source_files		=  source_files_advanced + \
+									["hardware/x86/x86_02_printf-box_advanced_v2.c"]
 
-ncurses_debug_name 			= ncurses_name + "_debug"
-ncurses_debug_build_dir 	= ncurses_build_dir + "/debug"
+printf_box_advanced_v2_debug_name 		= printf_box_advanced_v2_name + "_debug"
+printf_box_advanced_v2_debug_build_dir 	= printf_box_advanced_v2_build_dir + "/debug"
 
-ncurses_debug = target.executable(
-	name 				= 	ncurses_debug_name,
-	build_dir 			= 	ncurses_debug_build_dir,
-	target 				= 	target_str.format(ncurses_debug_name),
+printf_box_advanced_v2_debug = target.executable(
+	name 				= 	printf_box_advanced_v2_debug_name,
+	build_dir 			= 	printf_box_advanced_v2_debug_build_dir,
+	target 				= 	target_str.format(printf_box_advanced_v2_debug_name),
 	c_compiler			= 	c_compiler,
 	c_flags 			= 	common_flags + debug_flags,
 	linker 				= 	linker,
 	linker_flags 		=	linker_flags_common + \
-							[map_file_str.format(ncurses_debug_build_dir, ncurses_debug_name)],
-	source_files 		= 	ncurses_source_files,
-	include_dirs 		= 	include_dirs,
-	libraries 			= 	libraries_common + ["ncurses"],
+							[map_file_str.format(printf_box_advanced_v2_debug_build_dir, printf_box_advanced_v2_debug_name)],
+	source_files 		= 	printf_box_advanced_v2_source_files,
+	include_dirs 		= 	include_dirs_advanced,
+	libraries 			= 	libraries_common,
 	debugger 			=	debugger,
-	post_build_cmds 	= ["echo Finished building {0}".format(ncurses_debug_name)]
+	post_build_cmds 	= ["echo Finished building {0}".format(printf_box_advanced_v2_debug_name)]
 )
 
-#targets[ncurses_debug.name] = ncurses_debug
+targets[printf_box_advanced_v2_debug.name] = printf_box_advanced_v2_debug

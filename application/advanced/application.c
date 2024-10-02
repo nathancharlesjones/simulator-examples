@@ -12,13 +12,28 @@
 
 uint32_t period = 10;
 uint32_t next = -1;
-enum {X, Y, Z, TOTAL} direction_of_interest = X;
+direction_of_interest_t direction_of_interest = X;
 double max_accel = 10.0;
 double ewma_coeff = 0.2;
 
 double getMaxAccel(void)
 {
 	return max_accel;
+}
+
+uint32_t getPeriod(void)
+{
+	return period;
+}
+
+double getEwmaCoeff(void)
+{
+	return ewma_coeff;
+}
+
+direction_of_interest_t getDirectionOfInterest(void)
+{
+	return direction_of_interest;
 }
 
 void parseString(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_argv)
@@ -100,13 +115,13 @@ int main(int argc, char ** argv)
 			switch(direction_of_interest)
 			{
 				case X:
-					accel = x;
+					accel = x_avg;
 					break;
 				case Y:
-					accel = y;
+					accel = y_avg;
 					break;
 				case Z:
-					accel = z;
+					accel = z_avg;
 					break;
 				case TOTAL:
 					accel = total;

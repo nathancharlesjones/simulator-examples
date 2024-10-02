@@ -9,10 +9,18 @@
 #define MAX_NUM_ARGS 10
 #define MAX_INPUT_CHARS 64
 
-char background[] =	"+------------------------+\n\r"
-					"|Motor speed:   %9lf|\n\r"
-					"|LED brightness:%9lf|\n\r"
-					"+------------------------+\n\r";
+char background[] =	"+-----------------------------------------------------+\n\r"
+					"|Motor speed:    %12lf"     "                         |\n\r"
+					"|LED brightness: %12lf"     "                         |\n\r"
+					"+-----------------------------------------------------+\n\r"
+					"|Application commands:                                |\n\r"
+					"| 't': Toggle which direction is used to control the  |\n\r"
+					"|      motor speed (x -> y -> z -> total -> x)        |\n\r"
+					"|Simulator commands:                                  |\n\r"
+					"| 'x <double>': Set x accelerometer value to <double> |\n\r"
+					"| 'y <double>': Set y accelerometer value to <double> |\n\r"
+					"| 'z <double>': Set z accelerometer value to <double> |\n\r"
+					"+-----------------------------------------------------+\n\r";
 
 pthread_t h_scanfPthread;
 void* scanfPthread(void* data);
@@ -20,14 +28,15 @@ double curr_x = 0.0, curr_y = 0.0, curr_z = 0.0, curr_motor_speed = 0.0, curr_le
 
 void updateDisplay(void)
 {
-	printf("\033c");		// Reset terminal
+	printf("\033[;H");		// Send cursor to top-left corner
 	printf(background, curr_motor_speed, curr_led_brightness);
 }
 
 void initHardware(int argc, char ** argv)
 {
-	pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
+	printf("\033[2J\033[;H");		// Clear terminal
 	updateDisplay();
+	pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
 }
 
 void* scanfPthread(void* data)
