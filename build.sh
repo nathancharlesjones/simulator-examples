@@ -1,10 +1,5 @@
 #!/bin/sh
 
-C_FLAGS="-Wall -ffunction-sections -fdata-sections -g3 -O0"
-INCLUDE_DIRS_BASIC="-I application/basic -I hardware"
-INCLUDE_DIRS_ADVANCED="-I application/advanced -I hardware"
-#LINKER_FLAGS="-Wl,--gc-sections -Wl,-Map,build_shell/x86_00_simple-printf_basic.map,--cref"
-
 mkdir -p build_shell/application/basic
 mkdir -p build_shell/application/advanced
 mkdir -p build_shell/hardware/x86
@@ -20,7 +15,7 @@ mkdir -p build_shell/hardware/x86
 ###################################################################################################################################################################################################
 
 # Compile basic/application.o
-gcc 	$C_FLAGS	-I application/basic -I hardware	-c application/basic/application.c 					-o build_shell/application/basic/application.o
+gcc 	-Wall -ffunction-sections -fdata-sections -g3 -O0	-I application/basic -I hardware	-c application/basic/application.c 					-o build_shell/application/basic/application.o
 
 # Compile advanced/application.o
 gcc 	-Wall -ffunction-sections -fdata-sections -g3 -O0 	-I application/advanced -I hardware -c application/advanced/application.c 				-o build_shell/application/advanced/application.o
