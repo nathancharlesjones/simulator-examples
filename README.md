@@ -34,5 +34,4 @@ If you have ninja installed, run ninja. Otherwise run build.sh
 
 1. Run
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/nlTBdMFNMJs?si=IIOFSev_t37JXyzn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
-</iframe>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/nlTBdMFNMJs/0.jpg)](https://www.youtube.com/watch?v=nlTBdMFNMJs)
