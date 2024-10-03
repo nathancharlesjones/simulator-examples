@@ -28,6 +28,7 @@ Requirements:
 - Configured for Linux
 - pthreads required for all simulations
 
+Steps to build:
 1. Clone this repository: `git clone https://github.com/nathancharlesjones/simulator-examples`
 2. If you have ninja installed, navigate to the project folder and run `ninja`. Otherwise run `build.sh`.
 
