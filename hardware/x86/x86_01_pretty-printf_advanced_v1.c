@@ -82,9 +82,10 @@ void* scanfPthread(void* data)
             // Tokenize
             char *rest;
             char *token = strtok_r(buffer, " \n", &rest);
-            while (token != NULL) {
-              argv[argc++] = token;
-              token = strtok_r(NULL, " \n", &rest);
+            while (token != NULL)
+            {
+                argv[argc++] = token;
+                token = strtok_r(NULL, " \n", &rest);
             }
 
             switch(argv[0][0])

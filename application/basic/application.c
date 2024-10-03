@@ -22,29 +22,22 @@ int main(int argc, char ** argv)
 
     while(1)
     {
+        double accel_vals[4] = {0};
+
         if(next - getMillis() > period)
         {
-            double accel, total, x, y, z;
-            readAccel_gs(&x, &y, &z);
-            total = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
-            
-            switch(direction_of_interest)
-            {
-                case X:
-                    accel = x;
-                    break;
-                case Y:
-                    accel = y;
-                    break;
-                case Z:
-                    accel = z;
-                    break;
-                case TOTAL:
-                    accel = total;
-                    break;
-            }
-            setMotorSpeed((accel/max_accel) > 1.0 ? 1.0 : (accel/max_accel));
-            setLED((total/max_accel) > 1.0 ? 1.0 : (total/max_accel));
+            readAccel_gs(&accel_vals[X], &accel_vals[Y], &accel_vals[Z]);
+            accel_vals[TOTAL] = sqrt(pow(accel_vals[X], 2) + pow(accel_vals[Y], 2) + pow(accel_vals[Z], 2));
+
+            double motorSpeed = accel_vals[direction_of_interest]/max_accel;
+            motorSpeed = motorSpeed >  1.0 ?  1.0 :
+                         motorSpeed < -1.0 ? -1.0 : motorSpeed;
+            setMotorSpeed(motorSpeed);
+
+            double ledBrightness = accel_vals[TOTAL]/max_accel;
+            ledBrightness = ledBrightness >  1.0 ?  1.0 :
+                            ledBrightness < -1.0 ? -1.0 : ledBrightness;
+            setLED(ledBrightness);
             
             next += period;
         }

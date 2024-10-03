@@ -31,7 +31,8 @@ void* scanfPthread(void* data)
         // Tokenize
         char *rest;
         char *token = strtok_r(buffer, " \n", &rest);
-        while (token != NULL) {
+        while (token != NULL)
+        {
           scanf_argv[scanf_argc++] = token;
           token = strtok_r(NULL, " \n", &rest);
         }

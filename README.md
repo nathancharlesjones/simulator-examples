@@ -141,3 +141,17 @@ void updateDisplay(void)
 Local variables hold copies of all of the values that will be printed (except for values like "maximum acceleration" that don't necessarily pass through the simulator, so "getter" functions [e.g. `getMaxAccel()`] have to be provided.)
 
 Allowable commands are the same as for the Simple Printf simulations.
+
+<!--
+### Wokwi
+
+Steps to run:
+1. Navigate to https://wokwi.com/projects/367244067477216257 and press the "play" button
+
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/wokwi.gif)
+
+Steps to modify/rebuild:
+1. 
+
+This simulation uses
+-->

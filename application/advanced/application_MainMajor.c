@@ -85,10 +85,8 @@ void accelDoubleTapCallback(void)
     else                                direction_of_interest = X;
 }
 
-int main(int argc, char ** argv)
+int runTheApplication(void)
 {
-    initHardware(argc, argv);
-
     while(1)
     {
         double accel_vals[4] = {0};
