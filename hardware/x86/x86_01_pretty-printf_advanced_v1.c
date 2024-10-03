@@ -123,9 +123,9 @@ void readAccel_gs(double* x, double* y, double* z)
 {
 	if(rand_accels)
 	{
-		curr_x = curr_x + volatility*(((double)rand()/RAND_MAX)*2 - 1);
-		curr_y = curr_y + volatility*(((double)rand()/RAND_MAX)*2 - 1);
-		curr_z = curr_z + volatility*(((double)rand()/RAND_MAX)*2 - 1);
+		curr_x += volatility*(((double)rand()/RAND_MAX)*2 - 1);
+		curr_y += volatility*(((double)rand()/RAND_MAX)*2 - 1);
+		curr_z += volatility*(((double)rand()/RAND_MAX)*2 - 1);
 	}
 	*x = curr_x;
 	*y = curr_y;
