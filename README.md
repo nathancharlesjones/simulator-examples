@@ -34,4 +34,4 @@ If you have ninja installed, run ninja. Otherwise run build.sh
 
 1. Run
 
-<iframe src="https://giphy.com/embed/TsrNLIKucmc6IdQZ5U" width="480" height="269" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/TsrNLIKucmc6IdQZ5U">via GIPHY</a></p>
+![](https://github.com/nathancharlesjones/simulator-examples/media/simple-printf_basic.gif)
