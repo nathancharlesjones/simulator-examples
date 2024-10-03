@@ -34,4 +34,4 @@ If you have ninja installed, run ninja. Otherwise run build.sh
 
 1. Run
 
-![](https://github.com/nathancharlesjones/simulator-examples/media/simple-printf_basic.gif)
+![](https://github.com/nathancharlesjones/simulator-examples/tree/main/media/simple-printf_basic.gif)
