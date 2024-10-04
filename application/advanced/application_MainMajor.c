@@ -7,8 +7,6 @@
 #include "application.h"
 #include "hardware.h"
 
-extern char *strtok_r(char *, const char *, char **);
-
 #define MAX_LINE_LEN 32
 #define MAX_NUM_ARGS 10
 
@@ -85,45 +83,42 @@ void accelDoubleTapCallback(void)
     else                                direction_of_interest = X;
 }
 
-int runTheApplication(void)
+void runTheApplication(void)
 {
-    while(1)
+    static double accel_vals[4] = {0};
+    static bool first = true;
+
+    if(next - getMillis() > period)
     {
-        double accel_vals[4] = {0};
-        bool first = true;
-
-        if(next - getMillis() > period)
+        double x, y, z;
+  
+        readAccel_gs(&x, &y, &z);
+        if(first)
         {
-            double x, y, z;
-      
-            readAccel_gs(&x, &y, &z);
-            if(first)
-            {
-                accel_vals[X] = x;
-                accel_vals[Y] = y;
-                accel_vals[Z] = z;
-                first = false;
-            }
-            else
-            {
-                accel_vals[X] = ewma_coeff*x + (1.0 - ewma_coeff)*accel_vals[X];
-                accel_vals[Y] = ewma_coeff*y + (1.0 - ewma_coeff)*accel_vals[Y];
-                accel_vals[Z] = ewma_coeff*z + (1.0 - ewma_coeff)*accel_vals[Z];
-            }
-      
-            accel_vals[TOTAL] = sqrt(pow(accel_vals[X], 2) + pow(accel_vals[Y], 2) + pow(accel_vals[Z], 2));
-            
-            double motorSpeed = accel_vals[direction_of_interest]/max_accel;
-            motorSpeed = motorSpeed >  1.0 ?  1.0 :
-                         motorSpeed < -1.0 ? -1.0 : motorSpeed;
-            setMotorSpeed(motorSpeed);
-
-            double ledBrightness = accel_vals[TOTAL]/max_accel;
-            ledBrightness = ledBrightness >  1.0 ?  1.0 :
-                            ledBrightness < -1.0 ? -1.0 : ledBrightness;
-            setLED(ledBrightness);
-            
-            next += period;
+            accel_vals[X] = x;
+            accel_vals[Y] = y;
+            accel_vals[Z] = z;
+            first = false;
         }
+        else
+        {
+            accel_vals[X] = ewma_coeff*x + (1.0 - ewma_coeff)*accel_vals[X];
+            accel_vals[Y] = ewma_coeff*y + (1.0 - ewma_coeff)*accel_vals[Y];
+            accel_vals[Z] = ewma_coeff*z + (1.0 - ewma_coeff)*accel_vals[Z];
+        }
+  
+        accel_vals[TOTAL] = sqrt(pow(accel_vals[X], 2) + pow(accel_vals[Y], 2) + pow(accel_vals[Z], 2));
+        
+        double motorSpeed = accel_vals[direction_of_interest]/max_accel;
+        motorSpeed = motorSpeed >  1.0 ?  1.0 :
+                     motorSpeed < -1.0 ? -1.0 : motorSpeed;
+        setMotorSpeed(motorSpeed);
+
+        double ledBrightness = accel_vals[TOTAL]/max_accel;
+        ledBrightness = ledBrightness >  1.0 ?  1.0 :
+                        ledBrightness < -1.0 ? -1.0 : ledBrightness;
+        setLED(ledBrightness);
+        
+        next += period;
     }
 }

@@ -7,8 +7,6 @@
 #include "application.h"
 #include "hardware.h"
 
-extern char *strtok_r(char *, const char *, char **);
-
 #define MAX_LINE_LEN 32
 #define MAX_NUM_ARGS 10
 

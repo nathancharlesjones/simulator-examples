@@ -16,8 +16,8 @@ build build/application/basic/application.o: $
   include_dirs = -I hardware -I application/basic
 
 build $
-    build/hardware/x86/x86_00_simple-printf_basic.o: $
-    compile hardware/x86/x86_00_simple-printf_basic.c
+    build/hardware/x86/simple-printf_basic.o: $
+    compile hardware/x86/simple-printf_basic.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
@@ -25,7 +25,7 @@ build $
 
 build build/simple_printf_basic.elf: link $
     build/application/basic/application.o $
-    build/hardware/x86/x86_00_simple-printf_basic.o
+    build/hardware/x86/simple-printf_basic.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
       -Wl,-Map,build/simple_printf_basic.map,--cref
@@ -44,8 +44,8 @@ build $
   include_dirs = -I hardware -I application/advanced
 
 build $
-    build/hardware/x86/x86_00_simple-printf_advanced.o: $
-    compile hardware/x86/x86_00_simple-printf_advanced.c
+    build/hardware/x86/simple-printf_advanced.o: $
+    compile hardware/x86/simple-printf_advanced.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
@@ -54,7 +54,7 @@ build $
 build build/simple_printf_advanced.elf: $
     link $
     build/application/advanced/application.o $
-    build/hardware/x86/x86_00_simple-printf_advanced.o
+    build/hardware/x86/simple-printf_advanced.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
       -Wl,-Map,build/simple_printf_advanced.map,--cref
@@ -65,8 +65,8 @@ build build/simple_printf_advanced.elf: $
   libraries = -lm
 
 build $
-    build/hardware/x86/x86_01_pretty-printf_basic.o: $
-    compile hardware/x86/x86_01_pretty-printf_basic.c
+    build/hardware/x86/pretty-printf_basic.o: $
+    compile hardware/x86/pretty-printf_basic.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
@@ -74,7 +74,7 @@ build $
 
 build build/pretty-printf_basic.elf: link $
     build/application/basic/application.o $
-    build/hardware/x86/x86_01_pretty-printf_basic.o
+    build/hardware/x86/pretty-printf_basic.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
       -Wl,-Map,build/pretty-printf_basic.map,--cref
@@ -85,8 +85,8 @@ build build/pretty-printf_basic.elf: link $
   libraries = -lm
 
 build $
-    build/hardware/x86/x86_01_pretty-printf_advanced_v1.o: $
-    compile hardware/x86/x86_01_pretty-printf_advanced_v1.c
+    build/hardware/x86/pretty-printf_advanced_v1.o: $
+    compile hardware/x86/pretty-printf_advanced_v1.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
@@ -94,7 +94,7 @@ build $
 
 build build/pretty-printf_advanced_v1.elf: link $
     build/application/advanced/application.o $
-    build/hardware/x86/x86_01_pretty-printf_advanced_v1.o
+    build/hardware/x86/pretty-printf_advanced_v1.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
       -Wl,-Map,build/pretty-printf_advanced_v1.map,--cref
@@ -105,8 +105,8 @@ build build/pretty-printf_advanced_v1.elf: link $
   libraries = -lm
 
 build $
-    build/hardware/x86/x86_01_pretty-printf_advanced_v2.o: $
-    compile hardware/x86/x86_01_pretty-printf_advanced_v2.c
+    build/hardware/x86/pretty-printf_advanced_v2.o: $
+    compile hardware/x86/pretty-printf_advanced_v2.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
@@ -115,7 +115,7 @@ build $
 build build/pretty-printf_advanced_v2.elf: $
     link $
     build/application/advanced/application.o $
-    build/hardware/x86/x86_01_pretty-printf_advanced_v2.o
+    build/hardware/x86/pretty-printf_advanced_v2.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
       -Wl,-Map,build/pretty-printf_advanced_v2.map,--cref
@@ -124,3 +124,52 @@ build build/pretty-printf_advanced_v2.elf: $
   include_dirs = -I hardware -I application/advanced
   library_dirs = 
   libraries = -lm
+
+build $
+    build/application/advanced/application_MainMajor.o: $
+    compile application/advanced/application_MainMajor.c
+  compiler = gcc
+  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
+  defines = 
+  include_dirs = -I hardware -I application/advanced
+
+build $
+    build/hardware/x86/raygui_advanced.o: $
+    compile hardware/x86/raygui_advanced.c
+  compiler = gcc
+  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+
+build build/raygui_advanced.elf: $
+    link $
+    build/application/advanced/application_MainMajor.o $
+    build/hardware/x86/raygui_advanced.o
+  linker = gcc
+  linker_flags = -Wl,--gc-sections $
+      -Wl,-Map,build/raygui_advanced.map,--cref
+  linker_script = 
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+  library_dirs = 
+  libraries = -lm -lraylib
+
+build $
+    build/raygui/examples/portable_window.o: $
+    compile raygui/examples/portable_window/portable_window.c
+  compiler = gcc
+  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+
+build build/raygui_example_portable_window.elf: $
+    link $
+    build/raygui/examples/portable_window.o
+  linker = gcc
+  linker_flags = -Wl,--gc-sections $
+      -Wl,-Map,build/raygui_example_portable_window.map,--cref
+  linker_script = 
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+  library_dirs = 
+  libraries = -lm -lraylib -lGL -lpthread -ldl -lrt -lX11

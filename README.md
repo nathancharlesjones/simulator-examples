@@ -29,7 +29,7 @@ Requirements:
 - pthreads required for all simulations
 
 Steps to build:
-1. Clone this repository: `git clone https://github.com/nathancharlesjones/simulator-examples`
+1. Clone this repository: `git clone --recurse-submodules -j8 https://github.com/nathancharlesjones/simulator-examples`
 2. If you have ninja installed, navigate to the project folder and run `ninja`. Otherwise run `build.sh`.
 
 ## How do I use it? / What are the simulations?
@@ -150,8 +150,26 @@ Steps to run:
 
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/wokwi.gif)
 
-Steps to modify/rebuild:
-1. 
-
 This simulation uses
+
+### RayGUI
+
+Steps to run:
+1. Run `./build/raygui_advanced.elf`
+
+https://community.gamedev.tv/t/raylib-on-linux/212199/2
+
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui.gif)
+
+This simulation
+
+### PySimpleGUI
+
+Steps to run:
+1. Create a virtual serial port.
+    - Linux: Run `socat -d -d pty,rawer,echo=0 pty,rawer,echo=0`.
+    - Windows: Use the [com2com](https://com0com.sourceforge.net/) tool.
+2. Run Python (and application?)
+
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pysimplegui.gif)
 -->
