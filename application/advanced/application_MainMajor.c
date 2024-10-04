@@ -4,6 +4,7 @@
 #include <stddef.h>     // For NULL
 #include <stdlib.h>     // For atof, atoi
 #include <stdbool.h>    // For bool, true, false
+#include <stdio.h>
 #include "application.h"
 #include "hardware.h"
 
@@ -15,6 +16,9 @@ uint32_t next = -1;
 direction_of_interest_t direction_of_interest = X;
 double max_accel = 10.0;
 double ewma_coeff = 0.2;
+uint8_t idx = 0;
+char buffer[MAX_LINE_LEN+1] = {0};
+bool msg_received = false;
 
 double getMaxAccel(void)
 {
@@ -55,23 +59,31 @@ void processCommand(char * cmd_string)
   
     if(argc > 1)
     {
-        if(strcmp(argv[0],"p") == 0) period = atoi(argv[1]);
-        else if(strcmp(argv[0],"m") == 0) max_accel = atof(argv[1]);
-        else if(strcmp(argv[0],"w") == 0) ewma_coeff = atof(argv[1]);
+        if(strcmp(argv[0],"p") == 0)
+        {
+            period = atoi(argv[1]);
+            printf("Period: %d\n", period);
+        }
+        else if(strcmp(argv[0],"m") == 0)
+        {
+            max_accel = atof(argv[1]);
+            printf("Max accel: %lf / %d\n", max_accel, (int)max_accel);
+        }
+        else if(strcmp(argv[0],"w") == 0)
+        {
+            ewma_coeff = atof(argv[1]);
+            printf("EWMA coeff: %lf\n", ewma_coeff);
+        }
         else display((const char*)"Unknown command\n");
     }
 }
 
 void charReceivedCallback(char c)
 {
-    static uint8_t idx = 0;
-    static char buffer[MAX_LINE_LEN+1] = {0};
-    if(c != '\n' && idx < MAX_LINE_LEN) buffer[idx++] = c;
-    else
+    if(!msg_received)
     {
-        processCommand(buffer);
-        idx = 0;
-        memset(buffer, 0, MAX_LINE_LEN);
+        if(c != '\n' && idx < MAX_LINE_LEN) buffer[idx++] = c;
+        else msg_received = true;
     }
 }
 
@@ -120,5 +132,13 @@ void runTheApplication(void)
         setLED(ledBrightness);
         
         next += period;
+    }
+
+    if(msg_received)
+    {
+        processCommand(buffer);
+        idx = 0;
+        memset(buffer, 0, MAX_LINE_LEN);
+        msg_received = false;
     }
 }

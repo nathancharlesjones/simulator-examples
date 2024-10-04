@@ -1,28 +1,43 @@
-#include <time.h>           // For clock
+/*******************************************************************************************
+*
+*   LayoutName v1.0.0 - Tool Description
+*
+*   LICENSE: Propietary License
+*
+*   Copyright (c) 2022 raylib technologies. All Rights Reserved.
+*
+*   Unauthorized copying of this file, via any medium is strictly prohibited
+*   This project is proprietary and confidential unless the owner allows
+*   usage in any other form by expresely written permission.
+*
+**********************************************************************************************/
+#include <time.h>
 #include <stdio.h>          // For printf, scanf
-#include <string.h>         // For strtok_r
-#include <stdlib.h>         // For atof, atoi
 #include <stdint.h>         // For uint32_t
 #include <stdbool.h>        // For bool, true, false
 #include "application_MainMajor.h"
+
 #include "raylib.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-#define MAX_NUM_ARGS 10
-#define MAX_INPUT_CHARS 64
+float xValue = 0.0f;
+float yValue = 0.0f;
+float zValue = 0.0f;
+float motorSpeedSliderValue = 0.0f;
+float ledBrightnessSliderValue = 0.0f;
+bool randomizeChecked = false;
+float volatilitySliderValue = 0.1f;
+
+//----------------------------------------------------------------------------------
+// Controls Functions Declaration
+//----------------------------------------------------------------------------------
 
 
-float Slider001Value = 0.0f;
-float Slider002Value = 0.0f;
-float Slider003Value = 0.0f;
-float SliderBar017Value = 0.0f;
-float SliderBar015Value = 0.0f;
-bool Button016Pressed = false;
-bool rand_accels = false;
-double volatility = 0.2;
-
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
 int main()
 {
     srand(time(NULL));
@@ -36,8 +51,14 @@ int main()
 
     // layout_name: controls initialization
     //----------------------------------------------------------------------------------
-    bool ValueBOx019EditMode = false;
-    int ValueBOx019Value = (int)getMaxAccel();
+    bool doubleTapBtnPressed = false;
+    bool maxAccelEditMode = false;
+    int maxAccelValue = (int)getMaxAccel();
+    bool enterBtnPressed = false;
+    bool periodEditMode = false;
+    int periodValue = getPeriod();
+    float weightingValue = (float)getEwmaCoeff();
+    float oldWeightingValue = weightingValue;
     //----------------------------------------------------------------------------------
 
     SetTargetFPS(60);
@@ -51,6 +72,37 @@ int main()
         // TODO: Implement required update logic
         //----------------------------------------------------------------------------------
         runTheApplication();
+        char buffer[32] = {0};
+        //TODO: Add task/volatility enter buttons?
+        /*if(taskBtnPressed)
+        {
+            sprintf(buffer, "p %d\n", periodValue);
+            char * temp = buffer;
+            while(*temp) charReceivedCallback(*temp++);
+        }*/
+        /*if(volatilityBtnPressed)
+        {
+            sprintf(buffer, "m %d\n", maxAccelValue);
+            char * temp = buffer;
+            while(*temp) charReceivedCallback(*temp++);
+        }*/
+        if(enterBtnPressed)
+        {
+            sprintf(buffer, "p %d\n", periodValue);
+            char * temp = buffer;
+            while(*temp) charReceivedCallback(*temp++);
+
+            sprintf(buffer, "m %d\n", maxAccelValue);
+            temp = buffer;
+            while(*temp) charReceivedCallback(*temp++);
+        }
+        if(oldWeightingValue != weightingValue)
+        {
+            sprintf(buffer, "w %lf\n", (double)weightingValue);
+            char * temp = buffer;
+            while(*temp) charReceivedCallback(*temp++);
+            oldWeightingValue = weightingValue;
+        }
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -60,46 +112,46 @@ int main()
 
             // raygui: controls drawing
             //----------------------------------------------------------------------------------
-            char buffer[32] = {0};
+            if (GuiValueBox((Rectangle){ 96, 8, 80, 24 }, "Task period (ms)", &periodValue, 1, 10000, periodEditMode)) periodEditMode = !periodEditMode;
+            GuiCheckBox((Rectangle){ 32, 40, 24, 24 }, "Randomize inputs?", &randomizeChecked);
+            GuiLabel((Rectangle){ 80, 56, 72, 24 }, "Volatility");
+            GuiSlider((Rectangle){ 32, 80, 120, 16 }, NULL, NULL, &volatilitySliderValue, 0, 1);            
 
-            if (GuiValueBox((Rectangle){ 64, 192, 72, 24 }, "Max accel", &ValueBOx019Value, -100, 100, ValueBOx019EditMode)) ValueBOx019EditMode = !ValueBOx019EditMode;
-            if(ValueBOx019EditMode)
-            {
-                sprintf(buffer, "m %d\n", ValueBOx019Value);
-                char * temp = buffer;
-                while(*temp) charReceivedCallback(*temp++);
-                //ValueBOx019EditMode = !ValueBOx019EditMode;
-            }
+            GuiLabel((Rectangle){ 40, 104, 24, 24 }, "X");
+            sprintf(buffer, "%f", xValue);
+            GuiLabel((Rectangle){ 56, 104, 96, 24 }, buffer);
+            GuiSlider((Rectangle){ 32, 128, 120, 16 }, NULL, NULL, &xValue, -10, 10);
 
-            GuiSlider((Rectangle){ 0, 64, 120, 16 }, NULL, NULL, &Slider001Value, -10, 10);
-            GuiSlider((Rectangle){ 0, 112, 120, 16 }, NULL, NULL, &Slider002Value, -10, 10);
-            GuiSlider((Rectangle){ 0, 160, 120, 16 }, NULL, NULL, &Slider003Value, -10, 10);
+            GuiLabel((Rectangle){ 40, 152, 24, 24 }, "Y");
+            sprintf(buffer, "%f", yValue);
+            GuiLabel((Rectangle){ 56, 152, 96, 24 }, buffer);
+            GuiSlider((Rectangle){ 32, 176, 120, 16 }, NULL, NULL, &yValue, -10, 10);
 
-            GuiLabel((Rectangle){ 8, 40, 24, 24 }, "X");
-            sprintf(buffer, "%f", Slider001Value);
-            GuiLabel((Rectangle){ 24, 40, 96, 24 }, buffer);
-            GuiLabel((Rectangle){ 8, 88, 24, 24 }, "Y");
-            sprintf(buffer, "%f", Slider002Value);
-            GuiLabel((Rectangle){ 24, 88, 96, 24 }, buffer);
-            GuiLabel((Rectangle){ 8, 136, 24, 24 }, "Z");
-            sprintf(buffer, "%f", Slider003Value);
-            GuiLabel((Rectangle){ 24, 136, 96, 24 }, buffer);
+            GuiLabel((Rectangle){ 40, 200, 24, 24 }, "Z");
+            sprintf(buffer, "%f", zValue);
+            GuiLabel((Rectangle){ 56, 200, 96, 24 }, buffer);
+            GuiSlider((Rectangle){ 32, 224, 120, 16 }, NULL, NULL, &zValue, -10, 10);
 
-            GuiLabel((Rectangle){ 8, 8, 112, 24 }, "Direction for motor:");
+            if (GuiValueBox((Rectangle){ 248, 8, 72, 24 }, "Max accel", &maxAccelValue, -100, 100, maxAccelEditMode)) maxAccelEditMode = !maxAccelEditMode;
+            enterBtnPressed = GuiButton((Rectangle){ 328, 8, 48, 24 }, "Enter"); 
+
+            GuiLabel((Rectangle){ 224, 40, 120, 24 }, "EWMA weighting");
+            GuiSlider((Rectangle){ 224, 64, 120, 16 }, NULL, NULL, &weightingValue, 0, 1);
+
+            GuiLabel((Rectangle){ 200, 88, 112, 24 }, "Direction for motor:");
             char * directionStrings[4] = { [X] = "X", [Y] = "Y", [Z] = "Z", [TOTAL] = "TOTAL"};
-            GuiLabel((Rectangle){ 120, 8, 32, 24 }, directionStrings[getDirectionOfInterest()]);
-            if((Button016Pressed = GuiButton((Rectangle){ 160, 8, 120, 24 }, "Double Tap"))) accelDoubleTapCallback();
+            GuiLabel((Rectangle){ 312, 88, 56, 24 }, directionStrings[getDirectionOfInterest()]);
+            if((doubleTapBtnPressed = GuiButton((Rectangle){ 224, 112, 120, 24 }, "Double Tap"))) accelDoubleTapCallback();;
 
-            GuiLabel((Rectangle){ 144, 40, 120, 24 }, "Motor speed");
-            sprintf(buffer, "%f", SliderBar017Value);
-            GuiLabel((Rectangle){ 144, 64, 120, 24 }, buffer);
-            GuiSliderBar((Rectangle){ 144, 88, 120, 16 }, NULL, NULL, &SliderBar017Value, -1, 1);
+            GuiLabel((Rectangle){ 200, 144, 88, 24 }, "Motor speed");
+            sprintf(buffer, "%f", motorSpeedSliderValue);
+            GuiLabel((Rectangle){ 272, 144, 104, 24 }, buffer);
+            GuiSliderBar((Rectangle){ 224, 168, 120, 16 }, NULL, NULL, &motorSpeedSliderValue, 0, 1);
 
-            GuiLabel((Rectangle){ 144, 112, 120, 24 }, "LED Brightness");
-            sprintf(buffer, "%f", SliderBar015Value);
-            GuiLabel((Rectangle){ 144, 136, 120, 24 }, buffer);
-            GuiSliderBar((Rectangle){ 144, 160, 120, 16 }, NULL, NULL, &SliderBar015Value, -1, 1);
-
+            GuiLabel((Rectangle){ 200, 192, 48, 24 }, "LED");
+            sprintf(buffer, "%f", ledBrightnessSliderValue);
+            GuiLabel((Rectangle){ 272, 192, 104, 24 }, buffer);
+            GuiSliderBar((Rectangle){ 224, 216, 120, 16 }, NULL, NULL, &ledBrightnessSliderValue, 0, 1);
             //----------------------------------------------------------------------------------
 
         EndDrawing();
@@ -114,6 +166,10 @@ int main()
     return 0;
 }
 
+//------------------------------------------------------------------------------------
+// Controls Functions Definitions (local)
+//------------------------------------------------------------------------------------
+
 uint32_t getMillis(void)
 {
     return (uint32_t)((double)clock() * 1000.0 / CLOCKS_PER_SEC);
@@ -121,27 +177,25 @@ uint32_t getMillis(void)
 
 void readAccel_gs(double* x, double* y, double* z)
 {
-    /*
-    if(rand_accels)
+    if(randomizeChecked)
     {
-        curr_x += volatility*(((double)rand()/RAND_MAX)*2 - 1);
-        curr_y += volatility*(((double)rand()/RAND_MAX)*2 - 1);
-        curr_z += volatility*(((double)rand()/RAND_MAX)*2 - 1);
+        xValue += volatilitySliderValue*(((double)rand()/RAND_MAX)*2 - 1);
+        yValue += volatilitySliderValue*(((double)rand()/RAND_MAX)*2 - 1);
+        zValue += volatilitySliderValue*(((double)rand()/RAND_MAX)*2 - 1);
     }
-    */
-    *x = (double)Slider001Value;
-    *y = (double)Slider002Value;
-    *z = (double)Slider003Value;
+    *x = (double)xValue;
+    *y = (double)yValue;
+    *z = (double)zValue;
 }
 
 void setMotorSpeed(double speed)
 {
-    SliderBar017Value = (float)speed;
+    motorSpeedSliderValue = (float)speed;
 }
 
 void setLED(double brightness)
 {
-    SliderBar015Value = (float)brightness;
+    ledBrightnessSliderValue = (float)brightness;
 }
 
 void display(const char * msg)
