@@ -20,7 +20,6 @@ float Slider003Value = 0.0f;
 float SliderBar017Value = 0.0f;
 float SliderBar015Value = 0.0f;
 bool Button016Pressed = false;
-
 bool rand_accels = false;
 double volatility = 0.2;
 
@@ -37,7 +36,8 @@ int main()
 
     // layout_name: controls initialization
     //----------------------------------------------------------------------------------
-
+    bool ValueBOx019EditMode = false;
+    int ValueBOx019Value = (int)getMaxAccel();
     //----------------------------------------------------------------------------------
 
     SetTargetFPS(60);
@@ -60,12 +60,22 @@ int main()
 
             // raygui: controls drawing
             //----------------------------------------------------------------------------------
+            char buffer[32] = {0};
+
+            if (GuiValueBox((Rectangle){ 64, 192, 72, 24 }, "Max accel", &ValueBOx019Value, -100, 100, ValueBOx019EditMode)) ValueBOx019EditMode = !ValueBOx019EditMode;
+            if(ValueBOx019EditMode)
+            {
+                sprintf(buffer, "m %d\n", ValueBOx019Value);
+                char * temp = buffer;
+                while(*temp) charReceivedCallback(*temp++);
+                //ValueBOx019EditMode = !ValueBOx019EditMode;
+            }
+
             GuiSlider((Rectangle){ 0, 64, 120, 16 }, NULL, NULL, &Slider001Value, -10, 10);
             GuiSlider((Rectangle){ 0, 112, 120, 16 }, NULL, NULL, &Slider002Value, -10, 10);
             GuiSlider((Rectangle){ 0, 160, 120, 16 }, NULL, NULL, &Slider003Value, -10, 10);
 
             GuiLabel((Rectangle){ 8, 40, 24, 24 }, "X");
-            char buffer[32] = {0};
             sprintf(buffer, "%f", Slider001Value);
             GuiLabel((Rectangle){ 24, 40, 96, 24 }, buffer);
             GuiLabel((Rectangle){ 8, 88, 24, 24 }, "Y");
@@ -75,7 +85,10 @@ int main()
             sprintf(buffer, "%f", Slider003Value);
             GuiLabel((Rectangle){ 24, 136, 96, 24 }, buffer);
 
-            if(Button016Pressed = GuiButton((Rectangle){ 0, 8, 120, 24 }, "Double Tap")) accelDoubleTapCallback();
+            GuiLabel((Rectangle){ 8, 8, 112, 24 }, "Direction for motor:");
+            char * directionStrings[4] = { [X] = "X", [Y] = "Y", [Z] = "Z", [TOTAL] = "TOTAL"};
+            GuiLabel((Rectangle){ 120, 8, 32, 24 }, directionStrings[getDirectionOfInterest()]);
+            if((Button016Pressed = GuiButton((Rectangle){ 160, 8, 120, 24 }, "Double Tap"))) accelDoubleTapCallback();
 
             GuiLabel((Rectangle){ 144, 40, 120, 24 }, "Motor speed");
             sprintf(buffer, "%f", SliderBar017Value);
@@ -86,6 +99,7 @@ int main()
             sprintf(buffer, "%f", SliderBar015Value);
             GuiLabel((Rectangle){ 144, 136, 120, 24 }, buffer);
             GuiSliderBar((Rectangle){ 144, 160, 120, 16 }, NULL, NULL, &SliderBar015Value, -1, 1);
+
             //----------------------------------------------------------------------------------
 
         EndDrawing();
