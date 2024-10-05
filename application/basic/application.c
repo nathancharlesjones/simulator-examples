@@ -18,12 +18,12 @@ void accelDoubleTapCallback(void)
 
 int main(int argc, char ** argv)
 {
+    double accel_vals[4] = {0};
+
     initHardware(argc, argv);
 
     while(1)
     {
-        double accel_vals[4] = {0};
-
         if(next - getMillis() > period)
         {
             readAccel_gs(&accel_vals[X], &accel_vals[Y], &accel_vals[Z]);

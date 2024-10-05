@@ -133,43 +133,44 @@ build $
   defines = 
   include_dirs = -I hardware -I application/advanced
 
+#build $
+#    build/hardware/x86/raygui_advanced.o: $
+#    compile hardware/x86/raygui_advanced.c
+#  compiler = gcc
+#  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
+#  defines = 
+#  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+#
+#build build/raygui_advanced.elf: $
+#    link $
+#    build/application/advanced/application_MainMajor.o $
+#    build/hardware/x86/raygui_advanced.o
+#  linker = gcc
+#  linker_flags = -Wl,--gc-sections $
+#      -Wl,-Map,build/raygui_advanced.map,--cref
+#  linker_script = 
+#  defines = 
+#  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+#  library_dirs = 
+#  libraries = -lm -lraylib
+
 build $
-    build/hardware/x86/raygui_advanced.o: $
-    compile hardware/x86/raygui_advanced.c
+    build/hardware/x86/serial_advanced.o: $
+    compile hardware/x86/serial_advanced.c
   compiler = gcc
   flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
   defines = 
-  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+  include_dirs = -I hardware -I application/advanced
 
-build build/raygui_advanced.elf: $
+build build/serial_advanced.elf: $
     link $
-    build/application/advanced/application_MainMajor.o $
-    build/hardware/x86/raygui_advanced.o
+    build/application/advanced/application.o $
+    build/hardware/x86/serial_advanced.o
   linker = gcc
   linker_flags = -Wl,--gc-sections $
-      -Wl,-Map,build/raygui_advanced.map,--cref
+      -Wl,-Map,build/serial_advanced.map,--cref
   linker_script = 
   defines = 
-  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
+  include_dirs = -I hardware -I application/advanced
   library_dirs = 
-  libraries = -lm -lraylib
-
-build $
-    build/raygui/examples/portable_window.o: $
-    compile raygui/examples/portable_window/portable_window.c
-  compiler = gcc
-  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
-  defines = 
-  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
-
-build build/raygui_example_portable_window.elf: $
-    link $
-    build/raygui/examples/portable_window.o
-  linker = gcc
-  linker_flags = -Wl,--gc-sections $
-      -Wl,-Map,build/raygui_example_portable_window.map,--cref
-  linker_script = 
-  defines = 
-  include_dirs = -I hardware -I application/advanced -I raygui/src -I raylib/src
-  library_dirs = 
-  libraries = -lm -lraylib -lGL -lpthread -ldl -lrt -lX11
+  libraries = -lm

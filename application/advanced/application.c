@@ -85,13 +85,13 @@ void accelDoubleTapCallback(void)
 
 int main(int argc, char ** argv)
 {
+    double accel_vals[4] = {0};
+    bool first = true;
+
     initHardware(argc, argv);
 
     while(1)
     {
-        double accel_vals[4] = {0};
-        bool first = true;
-
         if(next - getMillis() > period)
         {
             double x, y, z;

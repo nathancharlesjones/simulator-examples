@@ -16,9 +16,6 @@ uint32_t next = -1;
 direction_of_interest_t direction_of_interest = X;
 double max_accel = 10.0;
 double ewma_coeff = 0.2;
-uint8_t idx = 0;
-char buffer[MAX_LINE_LEN+1] = {0};
-bool msg_received = false;
 
 double getMaxAccel(void)
 {
@@ -80,10 +77,14 @@ void processCommand(char * cmd_string)
 
 void charReceivedCallback(char c)
 {
-    if(!msg_received)
+    static uint8_t idx = 0;
+    static char buffer[MAX_LINE_LEN+1] = {0};
+    if(c != '\n' && idx < MAX_LINE_LEN) buffer[idx++] = c;
+    else
     {
-        if(c != '\n' && idx < MAX_LINE_LEN) buffer[idx++] = c;
-        else msg_received = true;
+        processCommand(buffer);
+        idx = 0;
+        memset(buffer, 0, MAX_LINE_LEN);
     }
 }
 
@@ -132,13 +133,5 @@ void runTheApplication(void)
         setLED(ledBrightness);
         
         next += period;
-    }
-
-    if(msg_received)
-    {
-        processCommand(buffer);
-        idx = 0;
-        memset(buffer, 0, MAX_LINE_LEN);
-        msg_received = false;
     }
 }
