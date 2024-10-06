@@ -162,14 +162,61 @@ https://community.gamedev.tv/t/raylib-on-linux/212199/2
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui.gif)
 
 This simulation
+-->
 
-### PySimpleGUI
+### PyQT + Virtual Serial Ports
 
 Steps to run:
 1. Create a virtual serial port.
     - Linux: Run `socat -d -d pty,rawer,echo=0 pty,rawer,echo=0`.
-    - Windows: Use the [com2com](https://com0com.sourceforge.net/) tool.
-2. Run Python (and application?)
+    - (On Windows you can use the [com2com](https://com0com.sourceforge.net/) tool, but there will be other changes you'll need to make to the code to get it to work on Windows.)
+2. In a second terminal, run `./build/serial_advanced.elf <FIRST SERIAL PORT>`
+3. In a third terminal, run `python3 hardware/x86/pyqt_serial.py <SECOND SERIAL PORT>`
 
-![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pysimplegui.gif)
--->
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pyqt_serial.gif)
+
+This simulation is, quite possibly, the most unique of the bunch and it demonstrates that we don't even need to have our simulator running in the same executable as our application! The application program calls the hardware-dependent functions, as before, but this time the hardware-dependent functions then send and receive serial data to/from a different program in order to fulfill the requirements of each function. For instance, previously our application would call `setMotorSpeed()` and this function would print something to the display:
+```
+// pretty-printf_advanced_v1.c
+void setMotorSpeed(double speed)
+{
+    ...
+    curr_motor_speed = speed;
+    updateDisplay();
+    ...
+}
+```
+_Now_, however, this function will send that data out the serial port:
+```
+// serial_advanced.c
+void setMotorSpeed(double speed)
+{
+    char buffer[32] = {0};
+    sprintf(buffer, "m %lf\n", speed);
+    write(serial_port, buffer, strlen(buffer));
+}
+```
+Notice that we're constructing a "motor speed" message by writing `'m' + space + speed value + '\n'` to the serial port.
+
+A different program (pyqt_serial_advanced.py) is written that accepts and responds to these serial commands.
+```
+def checkSerial(self):
+    while self.serial.inWaiting() > 0:
+        # Read one full message
+        text = ""
+        c = self.serial.read().decode('utf-8')
+        while(c != '\n'):
+            text += c
+            c = self.serial.read().decode('utf-8')
+        text = text.split(" ")
+        match text[0]:
+            ...
+            case "m":
+                # Append new value to pyqtgraph plot and adjust x/y data
+                self.motorSpeedTimeVals.append(time.time())
+                self.motorSpeed.append(float(text[1]))
+                self.motorSpeedTimeVals = list(filter(lambda time: time > self.motorSpeedTimeVals[-1] - 5, self.motorSpeedTimeVals))
+                self.motorSpeed = self.motorSpeed[-len(self.motorSpeedTimeVals):]
+                self.motorSpeedLine.setData(self.motorSpeedTimeVals, self.motorSpeed)
+```
+This means, as can be seen here, that our simulators or GUIs don't need to be written and executed in the same programming language as our application code; we can pick any GUI we want! Furthermore, we don't even need the simulator to be running on the same machine as our application code, provided that our serial link can communicate over a network. Think about it: you could have direct control over your MCU from a remote location!

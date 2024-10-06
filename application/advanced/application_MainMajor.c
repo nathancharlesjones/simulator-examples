@@ -4,7 +4,6 @@
 #include <stddef.h>     // For NULL
 #include <stdlib.h>     // For atof, atoi
 #include <stdbool.h>    // For bool, true, false
-#include <stdio.h>
 #include "application.h"
 #include "hardware.h"
 
@@ -56,21 +55,9 @@ void processCommand(char * cmd_string)
   
     if(argc > 1)
     {
-        if(strcmp(argv[0],"p") == 0)
-        {
-            period = atoi(argv[1]);
-            printf("Period: %d\n", period);
-        }
-        else if(strcmp(argv[0],"m") == 0)
-        {
-            max_accel = atof(argv[1]);
-            printf("Max accel: %lf / %d\n", max_accel, (int)max_accel);
-        }
-        else if(strcmp(argv[0],"w") == 0)
-        {
-            ewma_coeff = atof(argv[1]);
-            printf("EWMA coeff: %lf\n", ewma_coeff);
-        }
+        if(strcmp(argv[0],"p") == 0) period = atoi(argv[1]);
+        else if(strcmp(argv[0],"m") == 0) max_accel = atof(argv[1]);
+        else if(strcmp(argv[0],"w") == 0) ewma_coeff = atof(argv[1]);
         else display((const char*)"Unknown command\n");
     }
 }
@@ -104,6 +91,7 @@ void runTheApplication(void)
     if(next - getMillis() > period)
     {
         double x, y, z;
+        uint32_t start = getMillis();
   
         readAccel_gs(&x, &y, &z);
         if(first)
@@ -128,10 +116,9 @@ void runTheApplication(void)
         setMotorSpeed(motorSpeed);
 
         double ledBrightness = accel_vals[TOTAL]/max_accel;
-        ledBrightness = ledBrightness >  1.0 ?  1.0 :
-                        ledBrightness < -1.0 ? -1.0 : ledBrightness;
+        ledBrightness = ledBrightness >  1.0 ?  1.0 : ledBrightness;
         setLED(ledBrightness);
         
-        next += period;
+        next = start + period;
     }
 }

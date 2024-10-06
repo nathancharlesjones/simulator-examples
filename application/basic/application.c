@@ -26,6 +26,8 @@ int main(int argc, char ** argv)
     {
         if(next - getMillis() > period)
         {
+            uint32_t start = getMillis();
+
             readAccel_gs(&accel_vals[X], &accel_vals[Y], &accel_vals[Z]);
             accel_vals[TOTAL] = sqrt(pow(accel_vals[X], 2) + pow(accel_vals[Y], 2) + pow(accel_vals[Z], 2));
 
@@ -35,11 +37,10 @@ int main(int argc, char ** argv)
             setMotorSpeed(motorSpeed);
 
             double ledBrightness = accel_vals[TOTAL]/max_accel;
-            ledBrightness = ledBrightness >  1.0 ?  1.0 :
-                            ledBrightness < -1.0 ? -1.0 : ledBrightness;
+            ledBrightness = ledBrightness >  1.0 ?  1.0 : ledBrightness;
             setLED(ledBrightness);
             
-            next += period;
+            next = start + period;
         }
     }
 }

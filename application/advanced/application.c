@@ -4,8 +4,6 @@
 #include <stddef.h>     // For NULL
 #include <stdlib.h>     // For atof, atoi
 #include <stdbool.h>    // For bool, true, false
-#include <stdio.h>
-#include <time.h>
 #include "application.h"
 #include "hardware.h"
 
@@ -97,6 +95,7 @@ int main(int argc, char ** argv)
         if(next - getMillis() > period)
         {
             double x, y, z;
+            uint32_t start = getMillis();
       
             readAccel_gs(&x, &y, &z);
             if(first)
@@ -121,11 +120,10 @@ int main(int argc, char ** argv)
             setMotorSpeed(motorSpeed);
 
             double ledBrightness = accel_vals[TOTAL]/max_accel;
-            ledBrightness = ledBrightness >  1.0 ?  1.0 :
-                            ledBrightness < -1.0 ? -1.0 : ledBrightness;
+            ledBrightness = ledBrightness >  1.0 ?  1.0 : ledBrightness;
             setLED(ledBrightness);
             
-            next = getMillis() + period;
+            next = start + period;
         }
     }
 }
