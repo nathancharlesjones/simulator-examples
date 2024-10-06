@@ -59,7 +59,7 @@ Allowable commands for the Basic version:
 Allowable commands for the Advanced version:
 - All of the above, plus
 - `r` + Enter: Turn on/off generating random values for x, y, and z.
-- `v` + a floating-point value + Enter: Set the "volatility" for random number generation (new random values are "±v%" of the last value).
+- `v` + a floating-point value + Enter: Set the "volatility" for random number generation (new random values are "±v" of the last value).
 - `p` + a positive integer + Enter: Set the period of the main application task (in ms).
 - `m` + a positive integer + Enter: Set the value of "maximum acceleration", the value against which x/y/z/total are scaled to set the motor speed and LED brightness.
 - `w` + a floating-point value from 0 to 1 + Enter: Set the weighting value for the EWMA (lower values result in a stronger filter).
