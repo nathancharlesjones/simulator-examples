@@ -173,9 +173,15 @@ Steps to run:
 2. In a second terminal, run `./build/serial_advanced.elf <FIRST SERIAL PORT>`
 3. In a third terminal, run `python3 hardware/x86/pyqt_serial.py <SECOND SERIAL PORT>`
 
-![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pyqt_serial.gif)
+Alternately, run all of the above commands in a single terminal window by starting them in the background (postfix each command with `&` and take note of the PID that is displayed, so that you can end the process later).
 
-This simulation is, quite possibly, the most unique of the bunch and it demonstrates that we don't even need to have our simulator running in the same executable as our application! The application program calls the hardware-dependent functions, as before, but this time the hardware-dependent functions then send and receive serial data to/from a different program in order to fulfill the requirements of each function. For instance, previously our application would call `setMotorSpeed()` and this function would print something to the display:
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pyqt_serial_advanced.gif)
+
+This simulation is, quite possibly, the most unique of the bunch and it demonstrates that we don't even need to have our simulator running in the same executable as our application! The application program calls the hardware-dependent functions, as before, but this time the hardware-dependent functions then send and receive serial data to/from a different program in order to fulfill the requirements of each function.
+
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pyqt_serial_advanced.png)
+
+For instance, previously our application would call `setMotorSpeed()` and this function would print something to the display:
 ```
 // pretty-printf_advanced_v1.c
 void setMotorSpeed(double speed)
