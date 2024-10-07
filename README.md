@@ -175,6 +175,8 @@ Steps to run:
 
 Alternately, run all of the above commands in a single terminal window by starting them in the background (postfix each command with `&` and take note of the PID that is displayed, so that you can end the process later).
 
+(You can also watch this video on YouTube [here](https://youtu.be/c46W2OUhtFo).)
+
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/pyqt_serial_advanced.gif)
 
 This simulation is, quite possibly, the most unique of the bunch and it demonstrates that we don't even need to have our simulator running in the same executable as our application! The application program calls the hardware-dependent functions, as before, but this time the hardware-dependent functions then send and receive serial data to/from a different program in order to fulfill the requirements of each function.
