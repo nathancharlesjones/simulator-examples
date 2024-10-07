@@ -21,12 +21,6 @@ void* readThread(void* data);
 double curr_x = 0.0, curr_y = 0.0, curr_z = 0.0;
 bool new_vals = false;
 
-double speed_val = 0.0, speed_max = 0.0, speed_avg = 0.0, speed_min = 0.0;
-double led_val = 0.0, led_max = 0.0, led_avg = 0.0, led_min = 0.0;
-bool rand_accels = false;
-double volatility = 0.2;
-char * doiStrings[] = { [X] = "---X---", [Y] = "---Y---", [Z] = "---Z---", [TOTAL] = "-Total-" };
-
 void initHardware(int argc, char ** argv)
 {
     if(argc > 1) serial_port = open(argv[1], O_RDWR);
@@ -61,14 +55,12 @@ void* readThread(void* data)
         char buffer[MAX_INPUT_CHARS+1] = {0};
         char c = '\0';
         read(serial_port, &c, 1);
-        //printf("c: %c (%x)\n", c, c);
         if(c != 'a' && c != 't')            // Message meant for application code
         {
             charReceivedCallback(c);
             do
             {
                 read(serial_port, &c, 1);
-                //printf("c: %c (%x)\n", c, c);
                 charReceivedCallback(c);
             } while(c != '\n');
         }
@@ -78,10 +70,7 @@ void* readThread(void* data)
             {
                 buffer[idx++] = c;
                 read(serial_port, &c, 1);
-                //printf("c: %c (%x)\n", c, c);
             }
-
-            //printf("Received msg: %s\n", buffer);
 
             // Tokenize
             char *rest;
@@ -98,11 +87,9 @@ void* readThread(void* data)
                     curr_x = atof(argv[1]);
                     curr_y = atof(argv[2]);
                     curr_z = atof(argv[3]);
-                    //printf("Received 'a' msg: {x: %lf, y: %lf, z: %lf}\n", curr_x, curr_y, curr_z);
                     new_vals = true;
                     break;
                 case 't':
-                    //printf("Received 't' msg\n");
                     accelDoubleTapCallback();
                     break;
             }
@@ -119,14 +106,16 @@ uint32_t getMillis(void)
 
 void readAccel_gs(double* x, double* y, double* z)
 {
+    // Send out "r" command to request updated accel values
+    // Wait until new_vals is true (which is set above when
+    // the GUI sends new accel values), or send out "r" again
+    // after 1 sec if nothing is received.
     do
     {
         uint32_t start = getMillis();
-        //printf("Requesting new accel values\n");
         write(serial_port, "r\n", 2);
         while(!new_vals && (start + 1000 > getMillis()));
     } while(!new_vals);
-    //printf("Received new values: {x: %lf, y: %lf, z: %lf}\n", curr_x, curr_y, curr_z);
     *x = curr_x;
     *y = curr_y;
     *z = curr_z;
@@ -137,7 +126,6 @@ void setMotorSpeed(double speed)
 {
     char buffer[32] = {0};
     sprintf(buffer, "m %lf\n", speed);
-    //printf("New motor speed: %lf. Sending message '%s'\n", speed, buffer);
     write(serial_port, buffer, strlen(buffer));
 }
 
@@ -145,7 +133,6 @@ void setLED(double brightness)
 {
     char buffer[32] = {0};
     sprintf(buffer, "l %lf\n", brightness);
-    //printf("New LED brightness: %lf. Sending message '%s'\n", brightness, buffer);
     write(serial_port, buffer, strlen(buffer));
 }
 
