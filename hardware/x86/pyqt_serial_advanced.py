@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         graph = pg.PlotWidget()
         graph.setLabel('left', '% Maximum')
-        graph.setLabel('bottom', 'Time (relative sec)')
+        graph.setLabel('bottom', 'Clock time (sec)')
         graph.setBackground('w')
         graph.addLegend()
 
@@ -84,6 +84,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.motorSpeedLine = graph.plot(self.motorSpeedTimeVals, self.motorSpeed, name="Motor speed", pen=pg.mkPen(color=(255, 0, 0)))
         self.ledBrightnessLine = graph.plot(self.ledBrightnessTimeVals, self.ledBrightness, name="LED brightness", pen=pg.mkPen(color=(0, 0, 255)))
 
+        # Desired layout:
+        #    +----------------+--------------------+------------------------------------------------+
+        #    |Serial label    |Serial port text box|                                                |
+        #    +-------------------------------------|                                                |
+        #    |          Double tap btn             |                                                |
+        #    +----------------+--------------------|                                                |
+        #    |Period label    |Period text box     |                                                |
+        #    +-------------------------------------|                                                |
+        #    |     Random values toggle btn        |                                                |
+        #    +----------------+--------------------|                                                |
+        #    |Volatility label|Volatility text box |                                                |
+        #    +----------------+--------------------|                  Graph of                      |
+        #    |X label         |X text box          |                                                |
+        #    +-------------------------------------|                 motor speed                    |
+        #    |             X slider                |                                                |
+        #    +----------------+--------------------|                    and                         |
+        #    |Y label         |Y text box          |                                                |
+        #    +-------------------------------------|                LED brightness                  |
+        #    |             Y slider                |                                                |
+        #    +----------------+--------------------|                                                |
+        #    |Z label         |Z text box          |                                                |
+        #    +-------------------------------------|                                                |
+        #    |             Z slider                |                                                |
+        #    +----------------+--------------------|                                                |
+        #    |EWMA label      |EWMA text box       |                                                |
+        #    +----------------+--------------------|                                                |
+        #    |Max accel label |Max accel text box  |                                                |
+        #    +----------------+--------------------+------------------------------------------------+
         layout = QtWidgets.QGridLayout()
         layout.addWidget(self.portLabel,        1, 1)
         layout.addWidget(self.port,             1, 2)
@@ -131,6 +159,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def newMaxAccel(self):
         self.serial.write("m {0}\n".format(float(self.maxAccelValue.text())).encode('utf-8'))
 
+    # Each acceleration value can be set with both a slider or a text box. These functions
+    # (newSliderVal and newLineEditVal) ensure both widgets stay in sync with each other
+    # any time either one is updated.
     def newSliderVal(self, slider, value):
         value.setText(str(float(slider.value())))
 
@@ -148,13 +179,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def checkSerial(self):
         while self.serial.inWaiting() > 0:
+            # Build string until a newline is reached
             text = ""
             c = self.serial.read().decode('utf-8')
             while(c != '\n'):
                 text += c
                 c = self.serial.read().decode('utf-8')
-            text = text.split(" ")
-            match text[0]:
+
+            # Create argv out of received string
+            argv = text.split(" ")
+
+            # Perform action based on first argument given
+            match argv[0]:
                 case "r":
                     if self.randomBtn.isChecked():
                         self.xValue.setText(str(float(self.xValue.text()) + float(self.volatilityValue.text())*((random.random()*2)-1))[:15])
@@ -166,17 +202,31 @@ class MainWindow(QtWidgets.QMainWindow):
                     msg = "a {0} {1} {2}\n".format(self.xValue.text(), self.yValue.text(), self.zValue.text())
                     self.serial.write(msg.encode('utf-8'))
                 case "m":
+                    # Append new speed and time values
                     self.motorSpeedTimeVals.append(time.time())
-                    self.motorSpeed.append(float(text[1]))
+                    self.motorSpeed.append(float(argv[1]))
+
+                    # Remove any time values older than 5 sec
                     self.motorSpeedTimeVals = list(filter(lambda time: time > self.motorSpeedTimeVals[-1] - 5, self.motorSpeedTimeVals))
+                    
+                    # Remove the appropriate number of speed values
                     self.motorSpeed = self.motorSpeed[-len(self.motorSpeedTimeVals):]
+
+                    # Redraw the motor speed line
                     self.motorSpeedLine.setData(self.motorSpeedTimeVals, self.motorSpeed)
 
                 case "l":
+                    # Append new speed and time values
                     self.ledBrightnessTimeVals.append(time.time())
-                    self.ledBrightness.append(float(text[1]))
+                    self.ledBrightness.append(float(argv[1]))
+
+                    # Remove any time values older than 5 sec
                     self.ledBrightnessTimeVals = list(filter(lambda time: time > self.ledBrightnessTimeVals[-1] - 5, self.ledBrightnessTimeVals))
+                    
+                    # Remove the appropriate number of brightness values
                     self.ledBrightness = self.ledBrightness[-len(self.ledBrightnessTimeVals):]
+
+                    # Redraw the LED brightness line
                     self.ledBrightnessLine.setData(self.ledBrightnessTimeVals, self.ledBrightness)
 
 if __name__ == "__main__": 

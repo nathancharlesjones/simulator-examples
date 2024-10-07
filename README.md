@@ -8,13 +8,13 @@ All ASCII diagrams were made using [ASCIIflow.com](https://asciiflow.com/#/).
 
 In [hardware\x86](https://github.com/nathancharlesjones/simulator-examples/tree/main/hardware/x86) you'll find several different ways to simulate a simple embedded system on your computer. The embedded system we're simulating uses an accelerometer to control both the speed of a motor and the brightness of an LED.
 ```
-┌─────────────┐  ┌──────────┐  ┌─────┐         
-│Accelerometer├─►│          ├─►│Motor│         
-└─────────────┘  │          │  └─────┘         
-  ┌─ ── ── ── ┐  │   MCU    │  ┌───┐           
-  │Serial link│─►│          ├─►│LED│           
-  └ ── ── ── ─┘  │          │  └───┘           
-                 └──────────┘                  
++-------------+  +----------+  +-----+         
+|Accelerometer+->|          +->|Motor|         
++-------------+  |          |  +-----+         
+  +- - - - - -+  |   MCU    |  +---+           
+  |Serial link|->|          +->|LED|           
+  + - - - - - +  |          |  +---+           
+                 +----------+                  
                                                
 *Serial link included in the "advanced" version
 ```
@@ -30,7 +30,7 @@ Requirements:
 
 Steps to build:
 1. Clone this repository: `git clone --recurse-submodules -j8 https://github.com/nathancharlesjones/simulator-examples`
-2. If you have ninja installed, navigate to the project folder and run `ninja`. Otherwise run `build.sh`.
+2. If you have ninja installed, navigate to the project folder and run `ninja`. Or execute `ninja -t targets` to see all of the possible targets and then `ninja <TARGET>` to build just one. Otherwise run `build.sh`.
 
 ## How do I use it? / What are the simulations?
 
