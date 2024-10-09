@@ -129,7 +129,7 @@ char background[] = "+----------------------------------------------------------
 ```
 (I went a little crazy on that last one, but I was excited to see what I could do with this technique! I used [this website](https://www.asciiart.eu/text-to-ascii-art) to make the banner for it.)
 
-Anytime a value is updated, we simply "redraw" the screen. For Advanced, v1:
+Anytime a value is updated, we simply "redraw" the screen. For "Advanced, v1":
 ```
 void updateDisplay(void)
 {
@@ -142,29 +142,30 @@ Local variables hold copies of all of the values that will be printed (except fo
 
 Allowable commands are the same as for the Simple Printf simulations.
 
-<!--
 ### Wokwi
 
 Steps to run:
-1. Navigate to https://wokwi.com/projects/367244067477216257 and press the "play" button
+1. Navigate [here](https://wokwi.com/projects/411197919745362945) and press the "play" button.
+    - Click on the accelerometer and adjust the slider bars that represent the x, y, and z acceleration values to see the LED's brightness and the motor's speed change.
+    - Click the button (which simulates tapping the accelerometer) to change the direction used to set the motor speed.
+    - As with all of the "advanced" versions, you can also change the following things via the Serial Monitor that opens up when the simulation begins:
+        - Task period (type "p <new_period>", <new_period> is an integer value in ms)
+        - Max acceleration value (type "m <new_max_accel>", <new_max_accel> is a double value)
+        - EWMA weighting (type "w <new_weighting>", <new_weighting> is a double value between 0.0 and 1.0)
 
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/wokwi.gif)
 
-This simulation uses
+This simulation uses Wokwi (a "true simulator") so that we can see our application code running on a microcontroller, instead of on our computer. The example above targets the ATmega328 (a.k.a. the Arduino Uno R3), though the real processor you're targeting for your project could be a completely different one (we _are_ trying to write our code so that it's hardware-agnostic, after all).
 
-### RayGUI
-
-Steps to run:
-1. Run `./build/raygui_advanced.elf`
-
-https://community.gamedev.tv/t/raylib-on-linux/212199/2
-
-![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui.gif)
-
-This simulation
--->
+The biggest "change" I needed to make to the application code was to switch to the "Main Major" pattern discussed in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php) (though "change" is in quotes because we're not changing any of the real "business logic" of our applicaiton, just the fact that it's no longer in its own main loop). I also needed to save the application code as a .cpp file instead of a .c file, so that the Arduino C++ compiler could match function names correctly. Wokwi didn't have a continuous rotation servo motor (and I wasn't inclined to use any other motors that would have required motor drivers and complicated the circuit), so I used a normal servo motor; in this case, the servo's angle represents its speed. Also, the only accelerometer that was available doesn't support the "tap" feature we've been designing around, so I simulated that with a button.
 
 ### PyQT + Virtual Serial Ports
+
+Additional software requirements:
+- PyQT
+- pyqtgraph
+- pyserial
+- socat / com2com
 
 Steps to run:
 1. Create a virtual serial port.
@@ -173,7 +174,7 @@ Steps to run:
 2. In a second terminal, run `./build/serial_advanced.elf <FIRST SERIAL PORT>`
 3. In a third terminal, run `python3 hardware/x86/pyqt_serial.py <SECOND SERIAL PORT>`
 
-Alternately, run all of the above commands in a single terminal window by starting them in the background (postfix each command with `&` and take note of the PID that is displayed, so that you can end the process later).
+Alternately, run all of the above commands in a single terminal window by starting them in the background (postfix each command with `&` and take note of the PID that is displayed, so that you can end the processes later).
 
 (You can also watch this video on YouTube [here](https://youtu.be/c46W2OUhtFo).)
 
@@ -227,4 +228,4 @@ def checkSerial(self):
                 self.motorSpeed = self.motorSpeed[-len(self.motorSpeedTimeVals):]
                 self.motorSpeedLine.setData(self.motorSpeedTimeVals, self.motorSpeed)
 ```
-This means, as can be seen here, that our simulators or GUIs don't need to be written and executed in the same programming language as our application code; we can pick any GUI we want! Furthermore, we don't even need the simulator to be running on the same machine as our application code, provided that our serial link can communicate over a network. Think about it: you could have direct control over your MCU from a remote location!
+This means, as can be seen here, that our simulators or GUIs don't need to be written and executed in the same programming language as our application code; we can pick any GUI we want! Furthermore, we don't even need the simulator to be running on the same _machine_ as our application code, provided that our serial link can communicate over a network. Think about it: you could have direct control over your MCU from a remote location!

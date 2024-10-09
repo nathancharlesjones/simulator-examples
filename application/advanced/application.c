@@ -36,7 +36,7 @@ direction_of_interest_t getDirectionOfInterest(void)
     return direction_of_interest;
 }
 
-void parseString(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_argv)
+static void parseString(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_argv)
 {
     char *rest;
     char *token = strtok_r(buffer, " \n", &rest);
@@ -46,7 +46,7 @@ void parseString(char * buffer, uint8_t * argc, char ** argv, uint8_t sizeof_arg
     }
 }
 
-void processCommand(char * cmd_string)
+static void processCommand(char * cmd_string)
 {
     uint8_t argc = 0;
     char* argv[MAX_NUM_ARGS] = {0};
