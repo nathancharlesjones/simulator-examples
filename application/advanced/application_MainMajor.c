@@ -10,7 +10,7 @@
 #define MAX_LINE_LEN 32
 #define MAX_NUM_ARGS 10
 
-bool task_enabled = false;
+bool task_enabled = true;
 uint32_t period = 10;
 uint32_t next = -1;
 direction_of_interest_t direction_of_interest = X;

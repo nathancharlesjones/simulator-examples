@@ -142,7 +142,9 @@ void* scanfPthread(void* data)
 
 uint32_t getMillis(void)
 {
-    return (uint32_t)((double)clock() * 1000.0 / CLOCKS_PER_SEC);
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    return (uint32_t)((time.tv_sec*1000) + (time.tv_nsec/1000000));
 }
 
 void readAccel_gs(double* x, double* y, double* z)

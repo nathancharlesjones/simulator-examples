@@ -126,6 +126,27 @@ build build/pretty-printf_advanced_v2.elf: $
   libraries = -lm
 
 build $
+    build/hardware/x86/raygui_advanced.o: $
+    compile hardware/x86/raygui_advanced.c
+  compiler = gcc
+  flags = -Wall -ffunction-sections -fdata-sections -g3 -O0
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I ../raygui/src -I ../raylib/src
+
+build build/raygui_advanced.elf: $
+    link $
+    build/application/advanced/application_MainMajor.o $
+    build/hardware/x86/raygui_advanced.o
+  linker = gcc
+  linker_flags = -Wl,--gc-sections $
+      -Wl,-Map,build/raygui_advanced.map,--cref
+  linker_script = 
+  defines = 
+  include_dirs = -I hardware -I application/advanced -I ../raygui/src -I ../raylib/src
+  library_dirs = 
+  libraries = -lm -lraylib
+
+build $
     build/application/advanced/application_MainMajor.o: $
     compile application/advanced/application_MainMajor.c
   compiler = gcc
