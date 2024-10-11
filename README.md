@@ -8,13 +8,13 @@ All ASCII diagrams were made using [ASCIIflow.com](https://asciiflow.com/#/).
 
 In [hardware\x86](https://github.com/nathancharlesjones/simulator-examples/tree/main/hardware/x86) you'll find several different ways to simulate a simple embedded system on your computer. The embedded system we're simulating uses an accelerometer to control both the speed of a motor and the brightness of an LED.
 ```
-+-------------+  +----------+  +-----+         
-|Accelerometer+->|          +->|Motor|         
-+-------------+  |          |  +-----+         
-  +- - - - - -+  |   MCU    |  +---+           
-  |Serial link|->|          +->|LED|           
-  + - - - - - +  |          |  +---+           
-                 +----------+                  
++-------------+    +----------+    +-----+         
+|Accelerometer+--->|          +--->|Motor|         
++-------------+    |          |    +-----+        
+                   |   MCU    | 
+  +- - - - - -+    |          |    +---+           
+  |Serial link|--->|          +--->|LED|           
+  + - - - - - +    +----------+    +---+                               
                                                
 *Serial link included in the "advanced" version
 ```
@@ -153,6 +153,8 @@ Steps to run:
         - Max acceleration value (type "m <new_max_accel>", <new_max_accel> is a double value)
         - EWMA weighting (type "w <new_weighting>", <new_weighting> is a double value between 0.0 and 1.0)
 
+(You can also watch this video on YouTube [here](https://youtu.be/g3MbszQJKKY).)
+
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/wokwi.gif)
 
 This simulation uses Wokwi (a "true simulator") so that we can see our application code running on a microcontroller, instead of on our computer. The example above targets the ATmega328 (a.k.a. the Arduino Uno R3), though the real processor you're targeting for your project could be a completely different one (we _are_ trying to write our code so that it's hardware-agnostic, after all).
@@ -162,7 +164,7 @@ The biggest "change" I needed to make to the application code was to switch to t
 ### PyQT + Virtual Serial Ports
 
 Additional software requirements:
-- PyQT
+- PyQT5
 - pyqtgraph
 - pyserial
 - socat / com2com
