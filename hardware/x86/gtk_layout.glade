@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="mainWindow">
     <property name="can-focus">False</property>
+    <signal name="delete-event" handler="windowDelete" swapped="no"/>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -46,7 +47,6 @@
                   <object class="GtkEntry" id="volatilityValue">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <signal name="delete-event" handler="windowDelete" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
