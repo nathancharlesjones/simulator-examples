@@ -161,6 +161,31 @@ This simulation uses Wokwi (a "true simulator") so that we can see our applicati
 
 The biggest "change" I needed to make to the application code was to switch to the "Main Major" pattern discussed in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php) (though "change" is in quotes because we're not changing any of the real "business logic" of our applicaiton, just the fact that it's no longer in its own main loop). I also needed to save the application code as a .cpp file instead of a .c file, so that the Arduino C++ compiler could match function names correctly. Wokwi didn't have a continuous rotation servo motor (and I wasn't inclined to use any other motors that would have required motor drivers and complicated the circuit), so I used a normal servo motor; in this case, the servo's angle represents its speed. Also, the only accelerometer that was available doesn't support the "tap" feature we've been designing around, so I simulated that with a button.
 
+<!--
+### RayGUI
+
+Additional software requirements:
+- raylib
+- raygui?
+
+Steps to run:
+1. asdf
+
+(You can also watch this video on YouTube [here](https://youtu.be/c46W2OUhtFo).)
+
+![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced.gif)
+
+This simulation
+
+
+This simulation uses RayGUI, one of the immediate mode GUIs mentioned in the second Emb Rel article.
+
+Uses main major
+Writing/grokking the code is much easier, I think
+Communicates via shared globals
+Some oddities: checking when weighting Value != old weighting Value to send new message
+-->
+
 ### PyQT + Virtual Serial Ports
 
 Additional software requirements:

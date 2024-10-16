@@ -10,7 +10,7 @@
 #define MAX_LINE_LEN 32
 #define MAX_NUM_ARGS 10
 
-bool task_enabled = false;
+bool task_enabled = true;
 uint32_t period = 10;
 uint32_t next = -1;
 direction_of_interest_t direction_of_interest = X;
@@ -54,15 +54,12 @@ static void processCommand(char * cmd_string)
   
     parseString(cmd_string, &argc, argv, MAX_NUM_ARGS);
   
-    if(argc > 1)
-    {
-        if(strcmp(argv[0],"p") == 0) period = atoi(argv[1]);
-        else if(strcmp(argv[0],"m") == 0) max_accel = atof(argv[1]);
-        else if(strcmp(argv[0],"w") == 0) ewma_coeff = atof(argv[1]);
-        else if(strcmp(argv[0], "on") == 0) task_enabled = true;
-        else if(strcmp(argv[0], "off") == 0) task_enabled = false;
-        else display((const char*)"Unknown command\n");
-    }
+    if(strcmp(argv[0],"p") == 0) period = atoi(argv[1]);
+    else if(strcmp(argv[0],"m") == 0) max_accel = atof(argv[1]);
+    else if(strcmp(argv[0],"w") == 0) ewma_coeff = atof(argv[1]);
+    else if(strcmp(argv[0], "on") == 0) task_enabled = true;
+    else if(strcmp(argv[0], "off") == 0) task_enabled = false;
+    else display((const char*)"Unknown command\n");
 }
 
 void charReceivedCallback(char c)

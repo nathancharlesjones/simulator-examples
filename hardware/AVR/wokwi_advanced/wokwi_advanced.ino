@@ -23,21 +23,11 @@ uint32_t getMillis(void)
 //
 void readAccel_gs(double* x, double* y, double* z)
 {
-  uint8_t buffer[6];
-  // buffer = { XOUT_H, XOUT_L, YOUT_H, YOUT_L, ZOUT_H, ZOUT_L }
-  // Transmit register address first??
-  //HAL_I2C_Master_Receive(&hi2c1, MPU6050_ADDR << 1, buffer, 6, HAL_MAX_DELAY);
-
-  // Read AFSEL
-  uint8_t AFSEL = 0;
-  // Transmit AFSEL address first??
-  //HAL_I2C_Master_Receive(&hi2c1, MPU6050_ADDR << 1, buffer, 6, HAL_MAX_DELAY);
-  AFSEL = (AFSEL & 0x14) >> 3;
-
-  // Accel values = (int)((H << 8)|L) scale to full range (use AFSEL) convert to double p
-  // x = (double)((XOUT_H << 8) | XOUT_L);
-  // y = (double)((YOUT_H << 8) | YOUT_L);
-  // z = (double)((ZOUT_H << 8) | ZOUT_L);
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+  *x = a.acceleration.x;
+  *y = a.acceleration.y;
+  *z = a.acceleration.z;
 }
 
 // Set the motor speed from 0 to MAX using double value from 0 to 1.0.
@@ -86,23 +76,15 @@ static void processCommand(char * cmd_string)
     else if(strcmp(argv[0],"speed") == 0) setMotorSpeed(atof(argv[1]));
     else if(strcmp(argv[0],"read") == 0)
     {
-      const uint8_t max_num_data_bytes = 32;
-      uint8_t reg = atoi(argv[1]);
-      uint8_t num_bytes = (argc <= 2) ? 1 :
-                          atoi(argv[2]) < max_num_data_bytes ? atoi(argv[2]) : max_num_data_bytes;
-      uint8_t data[32] = {0};
-      
-      //HAL_I2C_Master_Transmit(&hi2c1, MPU6050_ADDR << 1, &reg, 1, HAL_MAX_DELAY);
-      //HAL_I2C_Master_Receive(&hi2c1, MPU6050_ADDR << 1, data, num_bytes, HAL_MAX_DELAY);
-      
-      display("Data received:\n");
-      char msg[32] = {0};
-      for(uint8_t idx = 0; idx < num_bytes; idx++)
-      {
-        snprintf(msg, 31, "\t[%x] = %x\n", reg+idx, data[idx]);
-        display(msg);
-        memset(msg, 0, 32);
-      }
+      sensors_event_t a, g, temp;
+      mpu.getEvent(&a, &g, &temp);
+      Serial.print("x = ");
+      Serial.print(a.acceleration.x);
+      Serial.print(" m/s^2 | y = ");
+      Serial.print(a.acceleration.y);
+      Serial.print(" m/s^2 | z = ");
+      Serial.print(a.acceleration.z);
+      Serial.print(" m/s^2\n");
     }
     else display((const char*)"Unknown command\n");
 }
@@ -117,7 +99,7 @@ void setup() {
       delay(10);
     }
   }
-  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
+  mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
 
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
