@@ -10,37 +10,36 @@
 r 0 40 -1 -1
 
 # c 000 4 Label000 40 48 120 24 0 SAMPLE TEXT
-c 000 4 Label000 80 56 72 24 0 Volatility
-c 001 4 Label001 40 104 24 24 0 X
-c 002 4 Label002 56 104 96 24 0 SAMPLE TEXT
-c 003 4 Label003 40 152 24 24 0 Y
-c 004 4 Label004 312 88 56 24 0 SAMPLE TEXT
-c 005 4 Label005 56 152 96 24 0 SAMPLE TEXT
-c 006 4 Label006 200 144 88 24 0 Motor speed
-c 007 4 Label007 40 200 24 24 0 Z
-c 008 4 Label008 272 144 104 24 0 SAMPLE TEXT
-c 009 4 Label009 56 200 96 24 0 SAMPLE TEXT
-c 010 4 Label010 200 192 48 24 0 LED
-c 011 4 Label011 224 40 120 24 0 EWMA weighting
-c 012 4 Label012 272 192 104 24 0 SAMPLE TEXT
-c 013 4 Label013 200 88 112 24 0 Direction for motor
+c 000 4 Label000 64 56 72 24 0 Volatility
+c 001 4 Label001 24 104 24 24 0 X
+c 002 4 Label002 40 104 96 24 0 SAMPLE TEXT
+c 003 4 Label003 24 152 24 24 0 Y
+c 004 4 Label004 272 88 56 24 0 SAMPLE TEXT
+c 005 4 Label005 40 152 96 24 0 SAMPLE TEXT
+c 006 4 Label006 160 144 88 24 0 Motor speed
+c 007 4 Label007 24 200 24 24 0 Z
+c 008 4 Label008 232 144 104 24 0 SAMPLE TEXT
+c 009 4 Label009 40 200 96 24 0 SAMPLE TEXT
+c 010 4 Label010 160 192 48 24 0 LED
+c 011 4 Label011 184 40 120 24 0 EWMA weighting
+c 012 4 Label012 232 192 104 24 0 SAMPLE TEXT
+c 013 4 Label013 160 88 112 24 0 Direction for motor
 
 # c 001 5 Button001 32 96 120 24 0 SAMPLE TEXT
-c 014 5 enterBtn 328 8 48 24 0 Enter
-c 015 5 doubleTapBtn 224 112 120 24 0 Double Tap
+c 015 5 doubleTapBtn 184 112 120 24 0 Double Tap
 
 # c 002 7 CheckBoxEx002 160 24 24 24 0 SAMPLE TEXT
-c 016 7 randomize 32 40 24 24 0 Randomize inputs?
+c 016 7 randomize 16 40 24 24 0 Randomize inputs?
 
 # c 003 14 ValueBOx003 200 64 120 24 0 SAMPLE TEXT
 c 017 14 periodValue 96 8 80 24 0 Task period (ms)
 c 018 14 maxAccelValue 248 8 72 24 0 Max accel
 
 # c 004 16 Slider004 72 152 120 16 0 
-c 019 16 volatilitySlider 32 80 120 16 0
-c 020 16 xSlider 32 128 120 16 0
-c 021 16 ySlider 32 176 120 16 0
-c 022 16 zSlider 32 224 120 16 0
-c 023 16 weighting 224 64 120 16 0
-c 024 16 motorSpeedValue 224 168 120 16 0
-c 025 16 ledBrightnessSlider 224 216 120 16 0
+c 019 16 volatilitySlider 16 80 120 16 0
+c 020 16 xSlider 16 128 120 16 0
+c 021 16 ySlider 16 176 120 16 0
+c 022 16 zSlider 16 224 120 16 0
+c 023 16 weighting 184 64 120 16 0
+c 024 16 motorSpeedValue 184 168 120 16 0
+c 025 16 ledBrightnessSlider 184 216 120 16 0

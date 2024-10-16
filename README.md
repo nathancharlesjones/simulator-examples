@@ -192,11 +192,11 @@ int main()
     while (!WindowShouldClose())
     {
         ...
-        GuiSlider((Rectangle){ 32, 128, 120, 16 }, NULL, NULL, &xValue, -10, 10);
-        GuiSlider((Rectangle){ 32, 176, 120, 16 }, NULL, NULL, &yValue, -10, 10);
-        GuiSlider((Rectangle){ 32, 224, 120, 16 }, NULL, NULL, &zValue, -10, 10);
+        GuiSlider((Rectangle){ 24, 128, 120, 16 }, NULL, NULL, &xValue, -10, 10);
+        GuiSlider((Rectangle){ 24, 176, 120, 16 }, NULL, NULL, &yValue, -10, 10);
+        GuiSlider((Rectangle){ 24, 224, 120, 16 }, NULL, NULL, &zValue, -10, 10);
         ...
-        GuiSliderBar((Rectangle){ 224, 168, 120, 16 }, NULL, NULL, &motorSpeedSliderValue, -1, 1);
+        GuiSliderBar((Rectangle){ 184, 168, 120, 16 }, NULL, NULL, &motorSpeedSliderValue, -1, 1);
         ...
     }
     ...
@@ -214,9 +214,9 @@ void setMotorSpeed(double speed)
 }
 ```
 
-In other immediate mode GUIs, the widgets themselves may return a value indicating which user action has occurred, if any. For example, a button may return a Boolean value indicating whether or not it is currently being pressed. I find I like this better than retained mode GUIs; its much simpler, in my opinion, to describe the behavior of a GUI than to do so with a bunch of callbacks. In truth, though, there can be a few oddities when using an immediate mode GUI. For instance, a few of our text boxes are used to send values to the application code. If we don't want a constant stream of values going to the application code, we need to know when the user has finished editing a text box. However, an immediate mode GUI won't have an "editingFinished" event like a retained mode GUI would. In this case, I chose to add an "Enter" button and only send out new values from the text boxes when it was pressed. In the case of raygui, another option would have been to have kept track of the "...EditMode" variables for the text fields, which have the value of `true` whenever the text box is currently being edited. I could have created my own "editingFinished" flag that would only be `true` on a `true` to `false` transition of the "...EditMode" variable (signaling that the user has finished editing the text box).
+In other immediate mode GUIs, the widgets themselves may return a value indicating which user action has occurred, if any. For example, a button may return a Boolean value indicating whether or not it is currently being pressed. I find I like this better than retained mode GUIs; its much simpler, in my opinion, to describe the behavior of a GUI than to do so with a bunch of callbacks. In truth, though, there can be a few oddities when using an immediate mode GUI. For instance, a few of our text boxes are used to send values to the application code. In raygui, the numeric entry widgets return `true` if their editing mode has _changed_, which causes an "...EditMode" variable (one per numeric entry) to toggle; a user has _finished_ editing a text box only when the function returns `true` (the editing mode has changed) _and_ the "...EditMode" variable is `false` (the text box is no longer being edited). Additionally, functions that make sliders return `true` whenever their value changes. If a user is sliding it to one side or the other, the function returns `true` for each change of value. This means that we sort of flood our application with new weighting values whenever it gets dragged by the user; hopefully there's a big enough buffer to handle all those new weighting messages!
 
-This example also takes advantage of the [Main Major](https://www.embeddedrelated.com/showarticle/1697.php#main-major) pattern to allow our [application code to be called](https://github.com/nathancharlesjones/simulator-examples/blob/dea460031810e9d73b3f09613f51d861416bfecd/hardware/x86/raygui_advanced.c#L74) on every iteration of the main loop. Alternatively, we could have created a thread during the GUI initialization to run our application code, though this may necessitate synchronization mechanisms when accessing the local variables in the future (if variables that can't be accessed atomically are used later on).
+This example also takes advantage of the [Main Major](https://www.embeddedrelated.com/showarticle/1697.php#main-major) pattern to allow our [application code to be called](https://github.com/nathancharlesjones/simulator-examples/blob/dea460031810e9d73b3f09613f51d861416bfecd/hardware/x86/raygui_advanced.c#L72) on every iteration of the main loop. Alternatively, we could have created a thread during the GUI initialization to run our application code, though this may necessitate synchronization mechanisms when accessing the local variables in the future (if variables that can't be accessed atomically are used later on).
 
 ### PyQT + Virtual Serial Ports
 
