@@ -26,10 +26,11 @@ There are two versions of the application code: one [basic](https://github.com/n
 
 Requirements:
 - Configured for Linux
-- pthreads required for all simulations
+- pthreads required for all simulations except "Wokwi" and "raygui"
+- "raygui" simulation requires [raylib](https://github.com/raysan5/raylib) (I followed [these instructions](https://community.gamedev.tv/t/raylib-on-linux/212199/2) for installation) and [raygui](https://github.com/raysan5/raygui) (the code assumes that raygui is located in the same parent folder as this directory).
 
 Steps to build:
-1. Clone this repository: `git clone --recurse-submodules -j8 https://github.com/nathancharlesjones/simulator-examples`
+1. Clone this repository: `git clone https://github.com/nathancharlesjones/simulator-examples`
 2. If you have ninja installed, navigate to the project folder and run `ninja`. Or execute `ninja -t targets` to see all of the possible targets and then `ninja <TARGET>` to build just one. Otherwise run `build.sh`.
 
 ## How do I use it? / What are the simulations?
@@ -161,30 +162,61 @@ This simulation uses Wokwi (a "true simulator") so that we can see our applicati
 
 The biggest "change" I needed to make to the application code was to switch to the "Main Major" pattern discussed in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php) (though "change" is in quotes because we're not changing any of the real "business logic" of our applicaiton, just the fact that it's no longer in its own main loop). I also needed to save the application code as a .cpp file instead of a .c file, so that the Arduino C++ compiler could match function names correctly. Wokwi didn't have a continuous rotation servo motor (and I wasn't inclined to use any other motors that would have required motor drivers and complicated the circuit), so I used a normal servo motor; in this case, the servo's angle represents its speed. Also, the only accelerometer that was available doesn't support the "tap" feature we've been designing around, so I simulated that with a button.
 
-<!--
-### RayGUI
+### raygui
 
 Additional software requirements:
-- raylib
-- raygui?
+- [raylib](https://github.com/raysan5/raylib) (I followed [these instructions](https://community.gamedev.tv/t/raylib-on-linux/212199/2) for installation)
+- [raygui](https://github.com/raysan5/raygui) (The code assumes that this project is located in the same parent folder as this directory.)
 
 Steps to run:
-1. asdf
+1. Run `./build/raygui_advanced.elf`
 
 (You can also watch this video on YouTube [here](https://youtu.be/eEa0Lp9LBLA).)
 
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced.gif)
 
-This simulation uses RayGUI, one of the immediate mode GUIs mentioned in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php). I used the [rGuiLayout](https://raylibtech.itch.io/rguilayout) tool to create the layout that I wanted (you can upload [this file](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced_layout.ectl) to rGuiLayout to see it) and then added the hardware-dependent functions to the source file that it generated.
+This simulation uses raygui, one of the immediate mode GUIs mentioned in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php). I used the [rGuiLayout](https://raylibtech.itch.io/rguilayout) tool to create the layout that I wanted (you can upload [this file](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced_layout.rgl) to rGuiLayout to see it) and then added the hardware-dependent functions to the source file that it generated. raygui is an immediate mode GUI, which means that the widgets modify local variables instead of triggering callbacks. The hardware-dependent functions like `readAccel_gs` or `setMotorSpeed` can then simply read from or write to these local variables (synchronization mechanisms like mutexes or semaphores aren't needed since there is only one thread of execution).
+
 ```
-raygui_advanced.c
+****************************
+*    raygui_advanced.c     *
+****************************
+float xValue = 0.0f;
+float yValue = 0.0f;
+float zValue = 0.0f;
+float motorSpeedSliderValue = 0.0f;
+...
+int main()
+{
+    ...
+    while (!WindowShouldClose())
+    {
+        ...
+        GuiSlider((Rectangle){ 32, 128, 120, 16 }, NULL, NULL, &xValue, -10, 10);
+        GuiSlider((Rectangle){ 32, 176, 120, 16 }, NULL, NULL, &yValue, -10, 10);
+        GuiSlider((Rectangle){ 32, 224, 120, 16 }, NULL, NULL, &zValue, -10, 10);
+        ...
+        GuiSliderBar((Rectangle){ 224, 168, 120, 16 }, NULL, NULL, &motorSpeedSliderValue, -1, 1);
+        ...
+    }
+    ...
+}
+void readAccel_gs(double* x, double* y, double* z)
+{
+    ...
+    *x = (double)xValue;
+    *y = (double)yValue;
+    *z = (double)zValue;
+}
+void setMotorSpeed(double speed)
+{
+    motorSpeedSliderValue = (float)speed;
+}
 ```
 
-Uses main major
-Writing/grokking the code is much easier, I think
-Communicates via shared globals
-Some oddities: checking when weighting Value != old weighting Value to send new message
--->
+In other immediate mode GUIs, the widgets themselves may return a value indicating which user action has occurred, if any. For example, a button may return a Boolean value indicating whether or not it is currently being pressed. I find I like this better than retained mode GUIs; its much simpler, in my opinion, to describe the behavior of a GUI than to do so with a bunch of callbacks. In truth, though, there can be a few oddities when using an immediate mode GUI. For instance, a few of our text boxes are used to send values to the application code. If we don't want a constant stream of values going to the application code, we need to know when the user has finished editing a text box. However, an immediate mode GUI won't have an "editingFinished" event like a retained mode GUI would. In this case, I chose to add an "Enter" button and only send out new values from the text boxes when it was pressed. In the case of raygui, another option would have been to have kept track of the "...EditMode" variables for the text fields, which have the value of `true` whenever the text box is currently being edited. I could have created my own "editingFinished" flag that would only be `true` on a `true` to `false` transition of the "...EditMode" variable (signaling that the user has finished editing the text box).
+
+This example also takes advantage of the [Main Major](https://www.embeddedrelated.com/showarticle/1697.php#main-major) pattern to allow our [application code to be called](https://github.com/nathancharlesjones/simulator-examples/blob/dea460031810e9d73b3f09613f51d861416bfecd/hardware/x86/raygui_advanced.c#L74) on every iteration of the main loop. Alternatively, we could have created a thread during the GUI initialization to run our application code, though this may necessitate synchronization mechanisms when accessing the local variables in the future (if variables that can't be accessed atomically are used later on).
 
 ### PyQT + Virtual Serial Ports
 
