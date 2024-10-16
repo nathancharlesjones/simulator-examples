@@ -171,14 +171,14 @@ Additional software requirements:
 Steps to run:
 1. asdf
 
-(You can also watch this video on YouTube [here](https://youtu.be/c46W2OUhtFo).)
+(You can also watch this video on YouTube [here](https://youtu.be/eEa0Lp9LBLA).)
 
 ![](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced.gif)
 
-This simulation
-
-
-This simulation uses RayGUI, one of the immediate mode GUIs mentioned in the second Emb Rel article.
+This simulation uses RayGUI, one of the immediate mode GUIs mentioned in the [second Embedded Related article](https://www.embeddedrelated.com/showarticle/1697.php). I used the [rGuiLayout](https://raylibtech.itch.io/rguilayout) tool to create the layout that I wanted (you can upload [this file](https://github.com/nathancharlesjones/simulator-examples/blob/main/media/raygui_advanced_layout.ectl) to rGuiLayout to see it) and then added the hardware-dependent functions to the source file that it generated.
+```
+raygui_advanced.c
+```
 
 Uses main major
 Writing/grokking the code is much easier, I think
