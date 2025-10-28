@@ -29,6 +29,7 @@ float motorSpeedSliderValue = 0.0f;
 float ledBrightnessSliderValue = 0.0f;
 bool randomizeChecked = false;
 float volatilitySliderValue = 0.1f;
+struct timespec start;
 
 //----------------------------------------------------------------------------------
 // Controls Functions Declaration
@@ -41,6 +42,7 @@ float volatilitySliderValue = 0.1f;
 int main()
 {
     srand(time(NULL));
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
     // Initialization
     //---------------------------------------------------------------------------------------
@@ -164,7 +166,7 @@ uint32_t getMillis(void)
 {
     struct timespec time;
     clock_gettime(CLOCK_MONOTONIC, &time);
-    return (uint32_t)((time.tv_sec*1000) + (time.tv_nsec/1000000));
+    return (uint32_t)(((time.tv_sec-start.tv_sec)*1000) + ((time.tv_nsec-start.tv_nsec)/1000000));
 }
 
 void readAccel_gs(double* x, double* y, double* z)

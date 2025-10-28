@@ -55,22 +55,22 @@ gcc 	-Wall -ffunction-sections -fdata-sections -g3 -O0 	-I application/advanced 
 #################################################################################################################################################################################################################################################################################################################################################
 
 # Link simple-printf_basic.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/simple-printf_basic.map,--cref 					-I application/basic -I hardware 										build/application/basic/application.o build/hardware/x86/simple-printf_basic.o 								-lm 			-o build/simple-printf_basic.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/simple-printf_basic.map,--cref 					-I application/basic -I hardware 										build/application/basic/application.o build/hardware/x86/simple-printf_basic.o 								-lm -pthread	-o build/simple-printf_basic.elf
 
 # Link simple-printf_advanced.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/simple-printf_advanced.map,--cref 					-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/simple-printf_advanced.o 						-lm 			-o build/simple-printf_advanced.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/simple-printf_advanced.map,--cref 					-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/simple-printf_advanced.o 						-lm -pthread	-o build/simple-printf_advanced.elf
 
 # Link pretty-printf_basic.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_basic.map,--cref 					-I application/basic -I hardware 										build/application/basic/application.o build/hardware/x86/pretty-printf_basic.o 								-lm 			-o build/pretty-printf_basic.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_basic.map,--cref 					-I application/basic -I hardware 										build/application/basic/application.o build/hardware/x86/pretty-printf_basic.o 								-lm -pthread	-o build/pretty-printf_basic.elf
 
 # Link pretty-printf_advanced_v1.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_advanced_v1.map,--cref 				-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/pretty-printf_advanced_v1.o 					-lm 			-o build/pretty-printf_advanced_v1.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_advanced_v1.map,--cref 				-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/pretty-printf_advanced_v1.o 					-lm -pthread	-o build/pretty-printf_advanced_v1.elf
 
 # Link pretty-printf_advanced_v2.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_advanced_v2.map,--cref 				-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/pretty-printf_advanced_v2.o 					-lm 			-o build/pretty-printf_advanced_v2.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/pretty-printf_advanced_v2.map,--cref 				-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/pretty-printf_advanced_v2.o 					-lm -pthread	-o build/pretty-printf_advanced_v2.elf
 
 # Link raygui_advanced.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/raygui_advanced.map,--cref 						-I application/advanced -I hardware -I ../raygui/src -I ../raylib/src	build/application/advanced/application_MainMajor.o build/hardware/x86/raygui_advanced.o 					-lm -lraylib	-o build/raygui_advanced.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/raygui_advanced.map,--cref 						-I application/advanced -I hardware -I ../raygui/src -I ../raylib/src	build/application/advanced/application_MainMajor.o build/hardware/x86/raygui_advanced.o 					-lm -lraylib	-o build/raygui_advanced.elf -L../raylib/src/
 
 # Link serial_advanced.elf
-gcc 		-Wl,--gc-sections -Wl,-Map,build/serial_advanced.map,--cref 						-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/serial_advanced.o 								-lm 			-o build/serial_advanced.elf
+gcc 		-Wl,--gc-sections -Wl,-Map,build/serial_advanced.map,--cref 						-I application/advanced -I hardware 									build/application/advanced/application.o build/hardware/x86/serial_advanced.o 								-lm -pthread	-o build/serial_advanced.elf

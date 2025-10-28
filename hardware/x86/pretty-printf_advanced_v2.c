@@ -53,6 +53,7 @@ double led_val = 0.0, led_max = 0.0, led_avg = 0.0, led_min = 0.0;
 bool rand_accels = false;
 double volatility = 0.2;
 char * doiStrings[] = { [X] = "---X---", [Y] = "---Y---", [Z] = "---Z---", [TOTAL] = "-Total-" };
+struct timespec start;
 
 void updateDisplay(void)
 {
@@ -68,6 +69,7 @@ void initHardware(int argc, char ** argv)
     printf("\033[2J\033[;H");       // Clear terminal
     updateDisplay();
     printf("\033[32;4H");
+    clock_gettime(CLOCK_MONOTONIC, &start);
     pthread_create(&h_scanfPthread, NULL, scanfPthread, NULL);
 }
 
@@ -144,7 +146,7 @@ uint32_t getMillis(void)
 {
     struct timespec time;
     clock_gettime(CLOCK_MONOTONIC, &time);
-    return (uint32_t)((time.tv_sec*1000) + (time.tv_nsec/1000000));
+    return (uint32_t)(((time.tv_sec-start.tv_sec)*1000) + ((time.tv_nsec-start.tv_nsec)/1000000));
 }
 
 void readAccel_gs(double* x, double* y, double* z)
