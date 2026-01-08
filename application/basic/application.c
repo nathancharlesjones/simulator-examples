@@ -10,6 +10,8 @@ double max_accel = 10.0;
 
 void accelDoubleTapCallback(void)
 {
+    // Function to respond to taps on the accelerometer
+    //
     if(X == direction_of_interest)      direction_of_interest = Y;
     else if(Y == direction_of_interest) direction_of_interest = Z;
     else if(Z == direction_of_interest) direction_of_interest = TOTAL;
